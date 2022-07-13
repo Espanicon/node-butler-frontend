@@ -2,7 +2,7 @@ import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import Layout, { siteTitle } from "../components/layout.js";
+import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
 import styles from "../styles/app.module.css";
 // import iconLogo from "../images/icon-logo.png";
@@ -36,7 +36,7 @@ export default function App() {
   }
 
   return (
-    <Layout>
+    <AppLayout>
       <Head>
         <title>{siteTitle}</title>
       </Head>
@@ -61,6 +61,6 @@ export default function App() {
         />
         <p>Login data: {JSON.stringify(loginData)}</p>
       </div>
-    </Layout>
+    </AppLayout>
   );
 }
