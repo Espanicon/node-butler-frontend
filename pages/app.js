@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
+// import Image from "next/image";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
 import styles from "../styles/app.module.css";
@@ -14,6 +14,17 @@ function getInitLoginData() {
   };
 }
 
+const loadingImageInlineStyle = {
+  "@media (prefersReducedMotion: noPreference)": `width: "100px", animation: "logoSpin infinite 5s linear"`,
+  "@keyframes logoSpin": {
+    from: {
+      transform: "rotate(0deg)"
+    },
+    to: {
+      transform: "rotate(360deg)"
+    }
+  }
+};
 export default function App() {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [loginData, setLoginData] = useState(getInitLoginData());
@@ -57,26 +68,28 @@ export default function App() {
         <title>{siteTitle}</title>
       </Head>
       <div className={styles.main}>
-        <div className={styles.logoContainer}>
-          <Image
-            src="/images/icon-logo.png"
-            width={100}
-            height={100}
-            className={styles.iconLogo}
-            alt="icon logo"
-          />
+        <div className={styles.sidebar}>
+          <p>overview</p>
+          <p>CPS proposals</p>
+          <p>Network Proposals</p>
+          <p>Contract explorer</p>
         </div>
-        <h2>Login with ICON</h2>
-        <button className={styles.loginButton} onClick={handleLogin}>
-          <p>Log in</p>
-        </button>
-        <LoginModal
-          isOpen={loginModalIsOpen}
-          onRequestClose={closeLoginModal}
-          onRetrieveData={getDataFromLoginModal}
-        />
-        <p>Login data: {JSON.stringify(loginData)}</p>
+        <div className={styles.mainSection}>
+          <div className={styles.logoContainer}>
+            <h1>Please login</h1>
+            <img
+              src="/images/icon-logo.png"
+              className={styles.iconLogo}
+              alt="icon logo"
+            />
+          </div>
+        </div>
       </div>
+      <LoginModal
+        isOpen={loginModalIsOpen}
+        onRequestClose={closeLoginModal}
+        onRetrieveData={getDataFromLoginModal}
+      />
     </AppLayout>
   );
 }

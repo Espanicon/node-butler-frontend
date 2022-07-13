@@ -1,7 +1,24 @@
+.logoContainer {
+  width: 100%;
+  height: 100%;
+  /* background-color: black; */
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  /* justify-content: center; */
+}
+
+.logoContainer > h1 {
+  margin-bottom: 30px;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .logoContainer {
-    animation: logo-spin infinite 20s linear;
+  .iconLogo {
+    animation: logo-spin infinite 5s linear;
   }
+}
+.iconLogo {
+  width: 50%;
+  max-width: 200px;
 }
 
 @keyframes logo-spin {
@@ -14,20 +31,46 @@
 }
 
 .main {
-  background-color: white;
+  /* background-color: black; */
   /* min-height: 100vh; */
+  flex: 1;
   width: 100%;
   display: flex;
-  padding: 20px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  /* padding: 20px; */
+  flex-flow: row nowrap;
+  /* align-items: center; */
+  /* justify-content: center; */
+  /* font-size: calc(10px + 2vmin); */
   color: black;
 }
 .main > p {
   word-wrap: break-word;
   width: 90%;
+}
+.sidebar {
+  font-size: calc(10px + 1.2vmin);
+  max-width: 600px;
+  min-width: 190px;
+  max-height: 100vh;
+  border-right: 2px solid #ed0044;
+  text-align: right;
+  padding-right: 5px;
+  cursor: pointer;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.sidebar > p {
+  border-bottom: 2px solid #ed0044;
+  margin: 0px;
+  padding: 4px;
+}
+.sidebar > p:hover {
+  background-color: rgba(251, 188, 89, 0.4);
+}
+.mainSection {
+  flex: 1;
+  max-width: 1200px;
+  /* background-color: rgba(0, 0, 0, 0.4); */
 }
 
 .loginButton {
@@ -38,4 +81,39 @@
 .loginButton > p {
   font-size: 20px;
   margin: 13px 0px;
+}
+
+/* devices less than 380px */
+@media (max-width: 379.98px) {
+}
+
+/* devices less than 640px */
+@media (max-width: 639.98px) {
+  .main {
+    flex-flow: column nowrap;
+  }
+  .sidebar {
+    flex-flow: row nowrap;
+    width: 100%;
+    max-width: auto;
+    min-width: 100%;
+    max-height: 50px;
+    border-bottom: 2px solid #ed0044;
+    border-right: none;
+    justify-content: space-between;
+    text-align: left;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .sidebar > p {
+    border-bottom: none;
+    border-left: 2px solid #ed0044;
+  }
+  .sidebar > p:nth-child(1) {
+    border-left: none;
+  }
+}
+
+/* devices bigger than 1440px */
+@media (min-width: 1440.02px) {
 }
