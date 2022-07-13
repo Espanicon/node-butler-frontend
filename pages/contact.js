@@ -24,11 +24,11 @@ export default function Contact() {
             </p>
 
             <p>
-              If you check one of those boxes (or even if you just want to
-              chat!) you can contact me via email at <i>info@espanicon.team</i>,
-              or any of the following social sites and platforms (if you want
-              the quickest reply from me I suggest you try <b>Twitter</b> or{" "}
-              <b>Telegram</b> first).
+              If you check one of those boxes, or if you have any recommendation
+              to improve <b>Node Butler</b> you can contact me via email at{" "}
+              <i>info@espanicon.team</i>, or any of the following social sites
+              and platforms (if you want the quickest reply from me I suggest
+              you try <b>Twitter</b> or <b>Telegram</b> first).
             </p>
             <div className={styles.contactContainer}>
               <ContactItems height={70} width={70} />
