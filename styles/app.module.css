@@ -1,5 +1,5 @@
 @media (prefers-reduced-motion: no-preference) {
-  .iconLogo {
+  .logoContainer {
     animation: logo-spin infinite 20s linear;
   }
 }
@@ -14,14 +14,16 @@
 }
 
 .main {
-  background-color: #282c34;
-  min-height: 100vh;
+  background-color: white;
+  /* min-height: 100vh; */
+  width: 100%;
   display: flex;
+  padding: 20px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: black;
 }
 .main > p {
   word-wrap: break-word;

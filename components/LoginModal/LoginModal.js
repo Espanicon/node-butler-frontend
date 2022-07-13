@@ -13,7 +13,7 @@ import styles from "./LoginModal.module.css";
 
 // variables
 //
-const IMG_HEIGHT = 20;
+const IMG_HEIGHT = 48;
 const IMG_WIDTH = IMG_HEIGHT;
 // testing data
 // import mockData from "../../../local_dev_files/mockData.js";
@@ -282,8 +282,8 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
               <span className={styles.bodySectionItemImg}>
                 <Image
                   alt=""
-                  width={IMG_WIDTH}
-                  height={IMG_HEIGHT}
+                  width={(IMG_WIDTH + 10) * 2}
+                  height={IMG_HEIGHT + 10}
                   src="/images/ledger-logo.png"
                 />
               </span>
@@ -358,7 +358,7 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
               <Image
                 width={IMG_WIDTH}
                 height={IMG_HEIGHT}
-                src="/images/cancel-logo.svg"
+                src="/images/cancel-logo.png"
                 className={styles.ledgerLogo}
                 alt="icon logo"
               />

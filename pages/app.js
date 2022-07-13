@@ -41,13 +41,15 @@ export default function App() {
         <title>{siteTitle}</title>
       </Head>
       <div className={styles.main}>
-        <Image
-          src="/images/icon-logo.png"
-          width={100}
-          height={100}
-          className={styles.iconLogo}
-          alt="icon logo"
-        />
+        <div className={styles.logoContainer}>
+          <Image
+            src="/images/icon-logo.png"
+            width={100}
+            height={100}
+            className={styles.iconLogo}
+            alt="icon logo"
+          />
+        </div>
         <h2>Login with ICON</h2>
         <button className={styles.loginButton} onClick={handleLogin}>
           <p>Log in</p>

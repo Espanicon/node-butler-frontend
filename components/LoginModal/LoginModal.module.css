@@ -125,6 +125,7 @@
   display: flex;
   flex-flow: row;
   cursor: pointer;
+  align-items: center;
 }
 .bodySection:hover {
   border: 2px solid black;
@@ -132,6 +133,9 @@
 .bodySectionItemImg > img {
   height: 50px;
   margin: 0px 5px;
+}
+.bodySectionItem > p {
+  margin-right: 10px;
 }
 .bodySectionItem:first-child {
   margin-right: auto;
