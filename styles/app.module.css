@@ -1,13 +1,39 @@
-.description {
-  max-width: 900px;
+@media (prefers-reduced-motion: no-preference) {
+  .iconLogo {
+    animation: logo-spin infinite 20s linear;
+  }
 }
-.cards {
-  max-width: 1600px;
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
-.container {
+
+.main {
+  background-color: #282c34;
+  min-height: 100vh;
   display: flex;
-  flex-flow: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-items: baseline;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+.main > p {
+  word-wrap: break-word;
+  width: 90%;
+}
+
+.loginButton {
+  width: 100px;
+  height: 50px;
+}
+
+.loginButton > p {
+  font-size: 20px;
+  margin: 13px 0px;
 }

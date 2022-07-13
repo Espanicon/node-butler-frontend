@@ -6,14 +6,15 @@ import Icx from "./utils/hw-app-icx/Icx";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import { v4 as uuidv4 } from "uuid";
 import { getIcxBalance } from "../../utils/IconService";
+import Image from "next/image";
 
 import "@fontsource/lato";
-import IconLogo from "./icon-logo.png";
-import HanaLogo from "./hana-logo.jpg";
-import LedgerLogo from "./ledger-logo.png";
-import CancelLogo from "./cancel-logo.svg";
 import styles from "./LoginModal.module.css";
 
+// variables
+//
+const IMG_HEIGHT = 20;
+const IMG_WIDTH = IMG_HEIGHT;
 // testing data
 // import mockData from "../../../local_dev_files/mockData.js";
 // const MOCK_DATA = mockData();
@@ -255,10 +256,20 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
             </div>
             <div className={styles.bodySectionItem}>
               <span className={styles.bodySectionItemImg}>
-                <img alt="" src={IconLogo} />
+                <Image
+                  alt=""
+                  src="/images/icon-logo.png"
+                  width={IMG_WIDTH}
+                  height={IMG_HEIGHT}
+                />
               </span>
               <span className={styles.bodySectionItemImg}>
-                <img alt="" src={HanaLogo} />
+                <Image
+                  alt=""
+                  width={IMG_WIDTH}
+                  height={IMG_HEIGHT}
+                  src="/images/hana-logo.jpg"
+                />
               </span>
             </div>
           </div>
@@ -269,7 +280,12 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
             </div>
             <div className={styles.bodySectionItem}>
               <span className={styles.bodySectionItemImg}>
-                <img alt="" src={LedgerLogo} />
+                <Image
+                  alt=""
+                  width={IMG_WIDTH}
+                  height={IMG_HEIGHT}
+                  src="/images/ledger-logo.png"
+                />
               </span>
             </div>
           </div>
@@ -286,8 +302,10 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
         {ledgerModalIsWaiting ? (
           <div className={styles.ledger}>
             <div className={styles.ledgerSection}>
-              <img
-                src={IconLogo}
+              <Image
+                width={IMG_WIDTH}
+                height={IMG_HEIGHT}
+                src="/images/icon-logo.png"
                 className={styles.ledgerLogo}
                 alt="icon logo"
               />
@@ -337,8 +355,10 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
         ) : (
           <div className={styles.ledger}>
             <div className={styles.ledgerSection}>
-              <img
-                src={CancelLogo}
+              <Image
+                width={IMG_WIDTH}
+                height={IMG_HEIGHT}
+                src="/images/cancel-logo.svg"
                 className={styles.ledgerLogo}
                 alt="icon logo"
               />
