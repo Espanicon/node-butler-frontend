@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,9 +7,8 @@ import styles from "../styles/appLayout.module.css";
 import utilStyles from "../styles/utils.module.css";
 import ContactItems from "./contactItems.js";
 
-const name = "nodeButler";
 export const siteTitle = "nodebutler.Espanicon.team";
-const height = 60; //TODO: bug: anything less than 127px and doesnt work
+const height = 40;
 const width = height / 1.0184331797;
 
 function SectionBreak() {
@@ -21,7 +21,27 @@ function SectionBreak() {
   );
 }
 
-export default function AppLayout({ children }) {
+function Breakline() {
+  return <div className={styles.breakline}></div>;
+}
+
+export default function AppLayout({ loginData, onLogout, onLogin, children }) {
+  let checkboxRef = useRef();
+
+  function handleLogin() {
+    closeHamburguerMenu();
+    onLogin();
+  }
+
+  function handleLogout() {
+    closeHamburguerMenu();
+    onLogout();
+  }
+
+  function closeHamburguerMenu() {
+    console.log(checkboxRef.current);
+    checkboxRef.current.checked = false;
+  }
   return (
     <div className={styles.container}>
       <Head>
@@ -64,6 +84,7 @@ export default function AppLayout({ children }) {
                 id="menu-toggle"
                 className={styles.menuToggle}
                 type="checkbox"
+                ref={checkboxRef}
               />
               <label
                 className={styles.menuButtonContainer}
@@ -71,6 +92,35 @@ export default function AppLayout({ children }) {
               >
                 <div className={styles.menuButton}></div>
               </label>
+              <div className={styles.loginMenu}>
+                <div className={styles.tooltipArrow}></div>
+                <div className={styles.tooltip}>
+                  {loginData.successfulLogin ? (
+                    <div className={styles.tooltipContainer}>
+                      <p>
+                        Logged in as:{" "}
+                        {loginData.selectedWallet.slice(0, 10) + "..."}
+                      </p>
+                      <Breakline />
+                      <p
+                        className={styles.tooltipElement}
+                        onClick={handleLogout}
+                      >
+                        Sign out
+                      </p>
+                    </div>
+                  ) : (
+                    <div className={styles.tooltipContainer}>
+                      <p
+                        className={styles.tooltipElement}
+                        onClick={handleLogin}
+                      >
+                        Login with ICON
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

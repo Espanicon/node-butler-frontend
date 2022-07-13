@@ -5,11 +5,18 @@ import Image from "next/image";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
 import styles from "../styles/app.module.css";
-// import iconLogo from "../images/icon-logo.png";
+
+function getInitLoginData() {
+  return {
+    selectedWallet: null,
+    methodUsed: null,
+    successfulLogin: false
+  };
+}
 
 export default function App() {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
-  const [loginData, setLoginData] = useState("");
+  const [loginData, setLoginData] = useState(getInitLoginData());
   /*
    * loginData: {
    * selectedWallet: 'hx3e202..',
@@ -35,8 +42,17 @@ export default function App() {
     setLoginData(loginData);
   }
 
+  function handleLogout() {
+    //
+    setLoginData(getInitLoginData());
+  }
+
   return (
-    <AppLayout>
+    <AppLayout
+      loginData={loginData}
+      onLogout={handleLogout}
+      onLogin={handleLogin}
+    >
       <Head>
         <title>{siteTitle}</title>
       </Head>
