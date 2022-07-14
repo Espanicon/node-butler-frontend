@@ -2,7 +2,6 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import Link from "next/link";
-// import Image from "next/image";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
 import AppSection from "../components/appSection";

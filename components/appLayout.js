@@ -7,7 +7,7 @@ import styles from "../styles/appLayout.module.css";
 import utilStyles from "../styles/utils.module.css";
 import ContactItems from "./contactItems.js";
 
-export const siteTitle = "nodebutler.Espanicon.team";
+export const siteTitle = "Node Butler - made by Espanicon.team";
 const height = 40;
 const width = height / 1.0184331797;
 
