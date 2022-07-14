@@ -130,6 +130,10 @@
 .bodySection:hover {
   border: 2px solid black;
 }
+.bodySectionItem {
+  display: flex;
+  flex-flow: row nowrap;
+}
 .bodySectionItemImg > img {
   height: 50px;
   margin: 0px 5px;

@@ -2,11 +2,10 @@
 //
 import { useEffect, useState } from "react";
 import Modal from "react-modal";
-import Icx from "./utils/hw-app-icx/Icx";
+import Icx from "./utils/hw-app-icx/Icx2.js";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import { v4 as uuidv4 } from "uuid";
 import { getIcxBalance } from "../../utils/IconService";
-import Image from "next/image";
 
 import "@fontsource/lato";
 import styles from "./LoginModal.module.css";
@@ -256,20 +255,10 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
             </div>
             <div className={styles.bodySectionItem}>
               <span className={styles.bodySectionItemImg}>
-                <Image
-                  alt=""
-                  src="/images/icon-logo.png"
-                  width={IMG_WIDTH}
-                  height={IMG_HEIGHT}
-                />
+                <img alt="" src="/images/icon-logo.png" />
               </span>
               <span className={styles.bodySectionItemImg}>
-                <Image
-                  alt=""
-                  width={IMG_WIDTH}
-                  height={IMG_HEIGHT}
-                  src="/images/hana-logo.jpg"
-                />
+                <img alt="" src="/images/hana-logo.jpg" />
               </span>
             </div>
           </div>
@@ -280,12 +269,7 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
             </div>
             <div className={styles.bodySectionItem}>
               <span className={styles.bodySectionItemImg}>
-                <Image
-                  alt=""
-                  width={(IMG_WIDTH + 10) * 2}
-                  height={IMG_HEIGHT + 10}
-                  src="/images/ledger-logo.png"
-                />
+                <img alt="" src="/images/ledger-logo.png" />
               </span>
             </div>
           </div>
@@ -302,9 +286,7 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
         {ledgerModalIsWaiting ? (
           <div className={styles.ledger}>
             <div className={styles.ledgerSection}>
-              <Image
-                width={IMG_WIDTH}
-                height={IMG_HEIGHT}
+              <img
                 src="/images/icon-logo.png"
                 className={styles.ledgerLogo}
                 alt="icon logo"
@@ -321,7 +303,7 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
                     <div
                       className={
                         indexOfLedgerAddressSelected === index
-                          ? `${styles.ledgerSectionWalletSection} ledgerAddressSelected`
+                          ? `${styles.ledgerSectionWalletSection} ${styles.ledgerAddressSelected}`
                           : `${styles.ledgerSectionWalletSection}`
                       }
                       key={uuidv4()}
@@ -355,9 +337,7 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
         ) : (
           <div className={styles.ledger}>
             <div className={styles.ledgerSection}>
-              <Image
-                width={IMG_WIDTH}
-                height={IMG_HEIGHT}
+              <img
                 src="/images/cancel-logo.png"
                 className={styles.ledgerLogo}
                 alt="icon logo"

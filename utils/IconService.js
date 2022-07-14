@@ -3,11 +3,11 @@
 import IconService from "icon-sdk-js";
 
 const API_NODE_LIST = {
-  geometry: "api.icon.geometry.io",
+  geometry: "api.icon.geometry.io", // deprecated
   ctz: "ctz.solidwallet.io"
 };
 
-const API_NODE = "https://" + API_NODE_LIST.geometry + "/api/v3";
+const API_NODE = "https://" + API_NODE_LIST.ctz + "/api/v3";
 const httpProvider = new IconService.HttpProvider(API_NODE);
 const iconService = new IconService(httpProvider);
 
