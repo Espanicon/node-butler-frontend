@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import Link from "next/link";
 // import Image from "next/image";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
+import AppSection from "../components/appSection";
 import styles from "../styles/app.module.css";
 
 function getInitLoginData() {
@@ -14,20 +16,23 @@ function getInitLoginData() {
   };
 }
 
-const loadingImageInlineStyle = {
-  "@media (prefersReducedMotion: noPreference)": `width: "100px", animation: "logoSpin infinite 5s linear"`,
-  "@keyframes logoSpin": {
-    from: {
-      transform: "rotate(0deg)"
-    },
-    to: {
-      transform: "rotate(360deg)"
-    }
-  }
-};
+function getSections() {
+  return [
+    { label: "Overview", code: "_OVERVIEW_", id: uuidv4() },
+    { label: "CPS Proposals", code: "_CPS_", id: uuidv4() },
+    { label: "Network Proposals", code: "_NETWORK_", id: uuidv4() },
+    { label: "Contract Explorer", code: "_CONTRACT_", id: uuidv4() }
+  ];
+}
+
+const INIT_LOGIN = getInitLoginData();
+const SECTIONS = getSections();
+const INIT_SECTION = SECTIONS[0];
+
 export default function App() {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
-  const [loginData, setLoginData] = useState(getInitLoginData());
+  const [loginData, setLoginData] = useState(INIT_LOGIN);
+  const [activeSection, setActiveSection] = useState(INIT_SECTION);
   /*
    * loginData: {
    * selectedWallet: 'hx3e202..',
@@ -55,7 +60,11 @@ export default function App() {
 
   function handleLogout() {
     //
-    setLoginData(getInitLoginData());
+    setLoginData(INIT_LOGIN);
+  }
+
+  function handleActiveSectionChange(newActiveSection) {
+    setActiveSection(newActiveSection);
   }
 
   return (
@@ -69,20 +78,35 @@ export default function App() {
       </Head>
       <div className={styles.main}>
         <div className={styles.sidebar}>
-          <p>overview</p>
-          <p>CPS proposals</p>
-          <p>Network Proposals</p>
-          <p>Contract explorer</p>
+          {SECTIONS.map(eachSection => {
+            return (
+              <div
+                className={`${styles.sidebarSection} ${
+                  activeSection.code === eachSection.code
+                    ? styles.sidebarActiveSection
+                    : ""
+                }`}
+                key={eachSection.id}
+                onClick={() => handleActiveSectionChange(eachSection)}
+              >
+                {eachSection.label}
+              </div>
+            );
+          })}
         </div>
         <div className={styles.mainSection}>
-          <div className={styles.logoContainer}>
-            <h1>Please login</h1>
-            <img
-              src="/images/icon-logo.png"
-              className={styles.iconLogo}
-              alt="icon logo"
-            />
-          </div>
+          {loginData.successfulLogin ? (
+            <AppSection activeSection={activeSection} />
+          ) : (
+            <div className={styles.logoContainer}>
+              <h1>Please login</h1>
+              <img
+                src="/images/icon-logo.png"
+                className={styles.iconLogo}
+                alt="icon logo"
+              />
+            </div>
+          )}
         </div>
       </div>
       <LoginModal

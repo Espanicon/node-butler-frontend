@@ -39,7 +39,6 @@ export default function AppLayout({ loginData, onLogout, onLogin, children }) {
   }
 
   function closeHamburguerMenu() {
-    console.log(checkboxRef.current);
     checkboxRef.current.checked = false;
   }
   return (
