@@ -47,17 +47,15 @@ const SETPREP = `{
     "id": 1,
     "method": "icx_sendTransaction",
     "params": {
-        "value": "0x6c6b935b8bbd400000",
         "data": {
-            "method": "registerPRep",
+            "method": "setPRep",
             "params": {
                 "name": "ABC Node",
+                "email": "abc@example.com",
                 "country": "KOR",
                 "city": "Seoul",
-                "email": "abc@example.com",
                 "website": "https://abc.example.com/",
                 "details": "https://abc.example.com/details/",
-                "p2pEndpoint": "abc.example.com:7100",
                 "nodeAddress": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
             }
         },
@@ -139,6 +137,44 @@ export default function OverviewSection({ activeSection }) {
       <Hr />
       <div className={styles.defaultSection}>
         <h2>Bonded Info:</h2>
+        <p>
+          A maximum of 10 addresses are allowed to be added to the{" "}
+          <i>bonderList</i> of your node. You can use the following form to
+          update your <i>bonderList</i> configuration, add up to 10 coma (,)
+          separated addresses and submit the form, a transaction will be signed
+          with your address using your preffered wallet software, the details of
+          the transaction will be shown in the wallet popup window before
+          approving the transaction.
+        </p>
+        <div className={styles.setPrepForm}>
+          <div
+            style={{
+              display: "flex",
+              flexFlow: "column nowrap",
+              alignSelf: "center"
+            }}
+          >
+            <table className={styles.tableSetPrep}>
+              <thead>
+                <tr>
+                  <th>Bonder List:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input
+                      placeholder="hx343e935.., hx2320caf4510..."
+                      type="text"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot></tfoot>
+            </table>
+            <button className={styles.button}>Submit</button>
+          </div>
+        </div>
         <Hr />
       </div>
       <div className={styles.defaultSection}>
