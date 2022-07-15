@@ -44,3 +44,19 @@
 .bottomSectionRow {
   padding: 10px;
 }
+.defaultSection {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.codeBlockContainer {
+  align-self: center;
+  width: 100%;
+  max-width: 500px;
+  background-color: #d6d3d1;
+}
+.codeBlock {
+  font-size: 0.6rem;
+  text-align: left;
+  padding: 10px;
+  width: 100%;
+}
