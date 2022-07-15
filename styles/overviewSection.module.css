@@ -1,0 +1,46 @@
+/* styles/appSection.module.css */
+.main {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.main > h2 {
+  margin: 5px;
+}
+
+.topSection {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 800px;
+  align-self: center;
+}
+.topSectionInfo > p,
+.bottomSection p {
+  margin: 2px 0px;
+}
+
+.topSectionLogo {
+  max-width: 150px;
+}
+
+.bottomSection {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  /* align-items: flex-start; */
+}
+.bottomSectionRow:first-child {
+  flex: 2;
+  max-width: 200px;
+}
+.bottomSectionRow:nth-child(2) {
+  flex: 1;
+  max-width: 400px;
+}
+.bottomSectionRow {
+  padding: 10px;
+}

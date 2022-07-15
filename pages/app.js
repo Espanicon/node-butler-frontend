@@ -5,6 +5,7 @@ import Link from "next/link";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
 import AppSection from "../components/appSection";
+import OverviewSection from "../components/overviewSection";
 import styles from "../styles/app.module.css";
 
 function getInitLoginData() {
@@ -98,7 +99,7 @@ export default function App() {
             (() => {
               switch (activeSection.code) {
                 case SECTIONS[0].code:
-                  return <AppSection activeSection={activeSection} />;
+                  return <OverviewSection activeSection={activeSection} />;
                 case SECTIONS[1].code:
                   return <AppSection activeSection={activeSection} />;
                 case SECTIONS[2].code:
