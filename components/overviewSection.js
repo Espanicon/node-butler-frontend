@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CodeBlock, dracula } from "react-code-blocks";
 import styles from "../styles/overviewSection.module.css";
 
 const MOCK_DATA = {
@@ -21,6 +22,25 @@ const MOCK_DATA = {
   validatedBlocks: 514433,
   p2pEndpoint: "127.0.0.1:9000"
 };
+const CODE = `{
+  representative: {
+    logo:{
+    logo_256: "http://somesite.com/logo-small.jpg",
+    logo_1024: "http://somesite.com/logo-big.jpg",
+    logo_svg: "http://somesite.com/logo.svg"
+  },
+  media: {
+    steemit: "",
+    twitter: "",
+    youtube: "",
+    facebook: "",
+    github: "",
+    reddit: "",
+    keybase: "",
+    telegram: "",
+    wechat: ""
+  }
+}`;
 
 const DETAILSJSON = {
   representative: {
@@ -117,47 +137,13 @@ export default function OverviewSection({ activeSection }) {
           your Prep settings with a link to it.
         </p>
         <div className={styles.codeBlockContainer}>
-          <pre style={{ whiteSpace: "pre-line" }}>
-            <code className={styles.codeBlock}>
-              &#123;
-              <br />
-              &#160;representative: &#123;
-              <br />
-              &#160;&#160;logo:&#123;
-              <br />
-              &#160;&#160;&#160;logo_256: "http://somesite.com/logo-small.jpg",
-              <br />
-              &#160;&#160;&#160;logo_1024: "http://somesite.com/logo-big.jpg",
-              <br />
-              &#160;&#160;&#160;logo_svg: "http://somesite.com/logo.svg"
-              <br />
-              &#160;&#160;&#125;,
-              <br />
-              &#160;&#160;media: &#123;
-              <br />
-              &#160;&#160;&#160;steemit: "",
-              <br />
-              &#160;&#160;&#160;twitter: "",
-              <br />
-              &#160;&#160;&#160;youtube: "",
-              <br />
-              &#160;&#160;&#160;facebook: "",
-              <br />
-              &#160;&#160;&#160;github: "",
-              <br />
-              &#160;&#160;&#160;reddit: "",
-              <br />
-              &#160;&#160;&#160;keybase: "",
-              <br />
-              &#160;&#160;&#160;telegram: "",
-              <br />
-              &#160;&#160;&#160;wechat: ""
-              <br />
-              &#160;&#160;&#125;
-              <br />
-              &#125;
-            </code>
-          </pre>
+          <CodeBlock
+            text={CODE}
+            language="json"
+            theme={dracula}
+            className={styles.codeBlock}
+            showLineNumbers={false}
+          />
         </div>
         <Hr />
       </div>
