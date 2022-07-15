@@ -95,7 +95,20 @@ export default function App() {
         </div>
         <div className={styles.mainSection}>
           {loginData.successfulLogin ? (
-            <AppSection activeSection={activeSection} />
+            (() => {
+              switch (activeSection.code) {
+                case SECTIONS[0].code:
+                  return <AppSection activeSection={activeSection} />;
+                case SECTIONS[1].code:
+                  return <AppSection activeSection={activeSection} />;
+                case SECTIONS[2].code:
+                  return <AppSection activeSection={activeSection} />;
+                case SECTIONS[3].code:
+                  return <AppSection activeSection={activeSection} />;
+                default:
+                  return <div>404 Unexpected Error</div>;
+              }
+            })()
           ) : (
             <div className={styles.logoContainer}>
               <h1>Please login</h1>
@@ -107,12 +120,19 @@ export default function App() {
             </div>
           )}
         </div>
+        <LoginModal
+          isOpen={loginModalIsOpen}
+          onRequestClose={closeLoginModal}
+          onRetrieveData={getDataFromLoginModal}
+        />
       </div>
-      <LoginModal
-        isOpen={loginModalIsOpen}
-        onRequestClose={closeLoginModal}
-        onRetrieveData={getDataFromLoginModal}
-      />
     </AppLayout>
   );
 }
+
+// (() => {
+//   switch (activeSection.code) {
+//     default:
+//       return <div>404 unexpected Error</div>;
+//   }
+// })()
