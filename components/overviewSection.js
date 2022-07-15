@@ -42,6 +42,27 @@ const CODE = `{
   }
 }`;
 
+const SETPREP = `{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "icx_sendTransaction",
+    "params": {
+        "value": "0x6c6b935b8bbd400000",
+        "data": {
+            "method": "registerPRep",
+            "params": {
+                "name": "ABC Node",
+                "country": "KOR",
+                "city": "Seoul",
+                "email": "abc@example.com",
+                "website": "https://abc.example.com/",
+                "details": "https://abc.example.com/details/",
+                "p2pEndpoint": "abc.example.com:7100",
+                "nodeAddress": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
+            }
+        },
+    }
+}`;
 const DETAILSJSON = {
   representative: {
     logo: {
@@ -136,18 +157,89 @@ export default function OverviewSection({ activeSection }) {
           (you can host it on your team website, github, etc) and then update
           your Prep settings with a link to it.
         </p>
-        <div className={styles.codeBlockContainer}>
-          <CodeBlock
-            text={CODE}
-            language="json"
-            theme={dracula}
-            className={styles.codeBlock}
-            showLineNumbers={false}
-          />
+        <div className={styles.codeBlockContainer2}>
+          <pre className={styles.codeBlockPre}>
+            {/* <code className={styles.codeBlock}>{SETPREP}</code> */}
+            {CODE}
+          </pre>
         </div>
         <Hr />
       </div>
-      <div className={styles.defaultSection}>{/* c */}</div>
+      <div className={styles.defaultSection}>
+        <h2>Update Prep on-chain data:</h2>
+        <p>
+          <a
+            href="https://docs.icon.community/icon-stack/client-apis/json-rpc-api/v3#setprep"
+            target="_blank"
+          >
+            Prep on-chain data
+          </a>{" "}
+          can be updated according to the following format:
+        </p>
+        <div className={styles.codeBlockContainer2}>
+          <pre className={styles.codeBlockPre}>
+            {/* <code className={styles.codeBlock}>{SETPREP}</code> */}
+            {SETPREP}
+          </pre>
+        </div>
+        <p>
+          Use the following form to update your Prep data, a transaction will be
+          signed with your node address using your preferred wallet, you can see
+          the details of the transaction before submitting it in the wallet
+          popup window.
+        </p>
+        <div className={styles.setPrepForm}>
+          <div
+            style={{
+              display: "flex",
+              flexFlow: "column nowrap",
+              alignSelf: "center"
+            }}
+          >
+            <table className={styles.tableSetPrep}>
+              <thead>
+                <tr>
+                  <th>Name:</th>
+                  <th>Email:</th>
+                  <th>Country:</th>
+                  <th>City:</th>
+                  <th>Website:</th>
+                  <th>Details:</th>
+                  <th>nodeAddress:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot></tfoot>
+            </table>
+            <button className={styles.button}>Submit</button>
+          </div>
+        </div>
+        <Hr />
+      </div>
     </div>
   );
 }

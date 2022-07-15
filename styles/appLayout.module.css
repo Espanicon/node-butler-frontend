@@ -70,31 +70,6 @@
   transform: translateY(4px);
 }
 
-/* .logoContainer { */
-/*   margin-right: auto; */
-/*   cursor: pointer; */
-/*   display: flex; */
-/*   flex-flow: row; */
-/*   /1* align-items: baseline; *1/ */
-/*   /1* justify-content: center; *1/ */
-/*   /1* border: 1px solid rgba(255, 255, 255, 0.35); *1/ */
-/*   /1* background-color: rgba(255, 255, 255, 0.7); *1/ */
-/*   /1* border-radius: 4px; *1/ */
-/* } */
-/* .logoContainer:hover { */
-/*   transform: translateY(2px); */
-/* } */
-/* .logoContainerInner { */
-/*   display: flex; */
-/*   flex-flow: row nowrap; */
-/*   width: 100%; */
-/* } */
-/* /1* .logoContainerInner > *:first-child { *1/ */
-/* /1*   flex: 1; *1/ */
-/* /1* } *1/ */
-/* /1* .logoContainerInner > *:nth-child(2) { *1/ */
-/* /1*   flex: 1; *1/ */
-/* /1* } *1/ */
 .headerLogoTitle {
   display: flex;
   flex-flow: row nowrap;
