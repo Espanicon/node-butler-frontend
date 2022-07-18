@@ -146,6 +146,49 @@ export default function OverviewSection({ activeSection }) {
           the transaction will be shown in the wallet popup window before
           approving the transaction.
         </p>
+        <p>Current wallets boding for your node:</p>
+        <ul>
+          <li>
+            <a
+              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+              target="_blank"
+            >
+              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+              target="_blank"
+            >
+              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+              target="_blank"
+            >
+              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+              target="_blank"
+            >
+              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+              target="_blank"
+            >
+              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+            </a>
+          </li>
+        </ul>
         <div className={styles.setPrepForm}>
           <div
             style={{
