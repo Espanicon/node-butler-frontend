@@ -8,7 +8,7 @@ import AppSection from "../components/appSection";
 import OverviewSection from "../components/overviewSection";
 import CPSProposalsSection from "../components/cpsProposalsSection";
 import NetworkProposalsSection from "../components/networkProposalsSection";
-import ContractExplorerSection from "../components/networkProposalsSection";
+import ContractExplorerSection from "../components/contractExplorerSection";
 import styles from "../styles/app.module.css";
 
 function getInitLoginData() {

@@ -8,3 +8,61 @@
 .main > h2 {
   margin: 5px;
 }
+.header {
+}
+.body {
+}
+.proposalContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 5px;
+  margin: 10px;
+}
+.greenBorder {
+  border: 2px solid #39ff14;
+}
+.redBorder {
+  border: 2px solid #f72119;
+}
+.yellowBorder {
+  border: 2px solid #fff01f;
+}
+.proposalContent {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.proposalTitle {
+  font-size: 1rem;
+  margin: 0px 5px;
+}
+.proposalTitle > p {
+  margin: 0px;
+}
+.proposalInfo {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+.proposalInfo > p {
+  margin: 0px 5px 0px 0px;
+  font-size: 0.8rem;
+}
+.proposalStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999999px;
+  margin: 0px;
+  padding: 0px;
+  width: 60px;
+  height: 60px;
+  overflow: hidden;
+}
+.proposalImage {
+  width: 60px;
+  min-width: 60px;
+  min-height: 60px;
+}
