@@ -6,6 +6,9 @@ import AppLayout, { siteTitle } from "../components/appLayout.js";
 import LoginModal from "../components/LoginModal/LoginModal";
 import AppSection from "../components/appSection";
 import OverviewSection from "../components/overviewSection";
+import CPSProposalsSection from "../components/cpsProposalsSection";
+import NetworkProposalsSection from "../components/networkProposalsSection";
+import ContractExplorerSection from "../components/networkProposalsSection";
 import styles from "../styles/app.module.css";
 
 function getInitLoginData() {
@@ -101,11 +104,15 @@ export default function App() {
                 case SECTIONS[0].code:
                   return <OverviewSection activeSection={activeSection} />;
                 case SECTIONS[1].code:
-                  return <AppSection activeSection={activeSection} />;
+                  return <CPSProposalsSection activeSection={activeSection} />;
                 case SECTIONS[2].code:
-                  return <AppSection activeSection={activeSection} />;
+                  return (
+                    <NetworkProposalsSection activeSection={activeSection} />
+                  );
                 case SECTIONS[3].code:
-                  return <AppSection activeSection={activeSection} />;
+                  return (
+                    <ContractExplorerSection activeSection={activeSection} />
+                  );
                 default:
                   return <div>404 Unexpected Error</div>;
               }

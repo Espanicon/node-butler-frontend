@@ -1,0 +1,10 @@
+/* styles/cpsProposalsSection.module.css */
+.main {
+  max-width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.main > h2 {
+  margin: 5px;
+}

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { CodeBlock, dracula } from "react-code-blocks";
 import styles from "../styles/overviewSection.module.css";
+import { Hr } from "./customComponents";
 
 const MOCK_DATA = {
   logo: "/images/icon-logo.png",
@@ -90,13 +90,6 @@ const DETAILSJSON = {
   }
 };
 
-function Hr() {
-  return (
-    <div
-      style={{ height: "2px", width: "100%", backgroundColor: "#d6d3d1" }}
-    ></div>
-  );
-}
 export default function OverviewSection({ activeSection }) {
   const [prepLogo, setPrepLogo] = useState(null);
   return (
@@ -237,10 +230,7 @@ export default function OverviewSection({ activeSection }) {
           your Prep settings with a link to it.
         </p>
         <div className={styles.codeBlockContainer2}>
-          <pre className={styles.codeBlockPre}>
-            {/* <code className={styles.codeBlock}>{SETPREP}</code> */}
-            {CODE}
-          </pre>
+          <pre className={styles.codeBlockPre}>{CODE}</pre>
         </div>
         <Hr />
       </div>
@@ -256,10 +246,7 @@ export default function OverviewSection({ activeSection }) {
           can be updated according to the following format:
         </p>
         <div className={styles.codeBlockContainer2}>
-          <pre className={styles.codeBlockPre}>
-            {/* <code className={styles.codeBlock}>{SETPREP}</code> */}
-            {SETPREP}
-          </pre>
+          <pre className={styles.codeBlockPre}>{SETPREP}</pre>
         </div>
         <p>
           Use the following form to update your Prep data, a transaction will be
