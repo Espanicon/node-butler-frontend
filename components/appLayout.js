@@ -25,7 +25,7 @@ function Breakline() {
   return <div className={styles.breakline}></div>;
 }
 
-export default function AppLayout({ loginData, onLogout, onLogin, children }) {
+export default function AppLayout({ localData, onLogout, onLogin, children }) {
   let checkboxRef = useRef();
 
   function handleLogin() {
@@ -94,11 +94,11 @@ export default function AppLayout({ loginData, onLogout, onLogin, children }) {
               <div className={styles.loginMenu}>
                 <div className={styles.tooltipArrow}></div>
                 <div className={styles.tooltip}>
-                  {loginData.successfulLogin ? (
+                  {localData.auth.successfulLogin ? (
                     <div className={styles.tooltipContainer}>
                       <p>
                         Logged in as:{" "}
-                        {loginData.selectedWallet.slice(0, 10) + "..."}
+                        {localData.auth.selectedWallet.slice(0, 10) + "..."}
                       </p>
                       <Breakline />
                       <p

@@ -5,21 +5,21 @@ import Modal from "react-modal";
 import Icx from "./utils/hw-app-icx/Icx2.js";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import { v4 as uuidv4 } from "uuid";
-import { getIcxBalance } from "../../utils/IconService";
+import { getIcxBalance } from "./utils/lib";
 
 import "@fontsource/lato";
 import styles from "./LoginModal.module.css";
 
+// import images not necessary when building with NEXTjs
+// import cancelImg from "./cancel-logo.svg";
+// import hanaImg from "./hana-logo.jpg";
+// import iconImg from "./icon-logo.png";
+// import ledgerImg from "./ledger-logo.png";
+
 // variables
-//
-const IMG_HEIGHT = 48;
-const IMG_WIDTH = IMG_HEIGHT;
-// testing data
-// import mockData from "../../../local_dev_files/mockData.js";
-// const MOCK_DATA = mockData();
 
 // for accesibility purposes
-Modal.setAppElement("#__next");
+Modal.setAppElement("body");
 
 const customStyles = {
   content: {
@@ -119,6 +119,12 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
     onRequestClose();
   }
 
+  function handleLoginData(newLoginData) {
+    // updates local loginData state and sends loginData to parent component
+    setLoginData(newLoginData);
+    onRetrieveData(newLoginData);
+  }
+
   function handleIconLogin() {
     // login with ICONex or Hana wallets
     window.dispatchEvent(
@@ -189,9 +195,11 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
     let newLoginData = loginData;
     newLoginData.methodUsed = LOGIN_METHODS.ledger;
     newLoginData.successfulLogin = true;
-    setLoginData(newLoginData);
 
-    onRetrieveData(loginData);
+    // update loginData on local state and send data to parent component
+    handleLoginData(newLoginData);
+
+    // close modal
     closeLedgerModal();
     closeModal();
   }
@@ -218,23 +226,38 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
           localLoginData.successfulLogin = true;
           break;
 
+        case "CANCEL":
+          console.log("ICONex/Hana wallet selection window closed by user");
+          break;
+
         default:
           console.error("Error on ICONEX_RELAY_RESPONSE");
           console.error("type: " + type);
-          console.error("payload: " + JSON.stringify(payload));
+          console.error("payload: ", payload);
       }
 
       // send data to parent component
-      setLoginData(localLoginData);
-      onRetrieveData(localLoginData);
+      handleLoginData(localLoginData);
+
       // close LoginModal
       closeModal();
     }
+    // create event listener for Hana and ICONex wallets
     window.addEventListener(
       "ICONEX_RELAY_RESPONSE",
       iconexRelayResponseEventHandler
     );
-  });
+
+    // return the following function to perform cleanup of the event listener
+    // on component unmount
+    return function removeCustomEventListener() {
+      window.removeEventListener(
+        "ICONEX_RELAY_RESPONSE",
+        iconexRelayResponseEventHandler
+      );
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Modal
@@ -255,10 +278,12 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
             </div>
             <div className={styles.bodySectionItem}>
               <span className={styles.bodySectionItemImg}>
-                <img alt="" src="/images/icon-logo.png" />
+                {/* <img alt="" src={iconImg} /> */}
+                <img alt="" src="images/icon-logo.png" />
               </span>
               <span className={styles.bodySectionItemImg}>
-                <img alt="" src="/images/hana-logo.jpg" />
+                {/* <img alt="" src={hanaImg} /> */}
+                <img alt="" src="images/hana-logo.jpg" />
               </span>
             </div>
           </div>
@@ -269,7 +294,8 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
             </div>
             <div className={styles.bodySectionItem}>
               <span className={styles.bodySectionItemImg}>
-                <img alt="" src="/images/ledger-logo.png" />
+                {/* <img alt="" src={ledgerImg} /> */}
+                <img alt="" src="images/ledger-logo.png" />
               </span>
             </div>
           </div>
@@ -287,7 +313,8 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
           <div className={styles.ledger}>
             <div className={styles.ledgerSection}>
               <img
-                src="/images/icon-logo.png"
+                // src={iconImg}
+                src="images/icon-logo.png"
                 className={styles.ledgerLogo}
                 alt="icon logo"
               />
@@ -338,7 +365,8 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
           <div className={styles.ledger}>
             <div className={styles.ledgerSection}>
               <img
-                src="/images/cancel-logo.png"
+                // src={cancelImg}
+                src="images/cancel-logo.png"
                 className={styles.ledgerLogo}
                 alt="icon logo"
               />

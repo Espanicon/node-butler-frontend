@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import Link from "next/link";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
-import LoginModal from "../components/LoginModal/LoginModal";
+import { LoginModal, utils } from "../components/LoginModal";
 import AppSection from "../components/appSection";
 import OverviewSection from "../components/overviewSection";
 import CPSProposalsSection from "../components/cpsProposalsSection";
@@ -11,14 +11,8 @@ import NetworkProposalsSection from "../components/networkProposalsSection";
 import ContractExplorerSection from "../components/contractExplorerSection";
 import styles from "../styles/app.module.css";
 
-function getInitLoginData() {
-  return {
-    selectedWallet: null,
-    methodUsed: null,
-    successfulLogin: false
-  };
-}
-
+// Functions
+//
 function getSections() {
   return [
     { label: "Overview", code: "_OVERVIEW_", id: uuidv4() },
@@ -28,24 +22,49 @@ function getSections() {
   ];
 }
 
-const INIT_LOGIN = getInitLoginData();
+// Constants
+//
+const LOCAL_KEY = "NB-1a96894a-afb9-4050-899b-71e63d5261f2";
+const INIT_LOGIN = utils.getInitLocalData();
 const SECTIONS = getSections();
 const INIT_SECTION = SECTIONS[0];
 
+// Main react component
 export default function App() {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
-  const [loginData, setLoginData] = useState(INIT_LOGIN);
+  const [localData, setLocalData] = useState(INIT_LOGIN);
   const [activeSection, setActiveSection] = useState(INIT_SECTION);
   /*
-   * loginData: {
+   * localData: {
    * selectedWallet: 'hx3e202..',
    * methodUsed: 'ICONEX' | 'LEDGER',
    * successfulLogin: bool
    */
+  function toggleLogin() {
+    // toggles between login and logout
+    if (localData.auth.successfulLogin) {
+      handleLogout();
+    } else {
+      handleLogin();
+    }
+  }
 
   function handleLogin() {
     // login with ICON
     setLoginModalIsOpen(true);
+  }
+
+  function handleLogout() {
+    // close user session
+    handleLocalDataChange(utils.getInitLocalData());
+  }
+
+  function handleLocalDataChange(newLocalData) {
+    //
+    setLocalData(newLocalData);
+
+    // write login data locally to make user session persistance
+    utils.saveDataToLocal(newLocalData, LOCAL_KEY);
   }
 
   function closeLoginModal() {
@@ -58,21 +77,27 @@ export default function App() {
   function getDataFromLoginModal(loginData) {
     // Callback function that gets called from within LoginModal
     // to pass login data into parent
-    setLoginData(loginData);
-  }
+    const newLocalData = {
+      auth: loginData
+    };
 
-  function handleLogout() {
-    //
-    setLoginData(INIT_LOGIN);
+    handleLocalDataChange(newLocalData);
   }
 
   function handleActiveSectionChange(newActiveSection) {
     setActiveSection(newActiveSection);
   }
+  useEffect(() => {
+    // get local login data on first render
+    const userLocalData = utils.getLocalData(LOCAL_KEY);
+
+    // set loginData state
+    handleLocalDataChange(userLocalData);
+  }, []);
 
   return (
     <AppLayout
-      loginData={loginData}
+      localData={localData}
       onLogout={handleLogout}
       onLogin={handleLogin}
     >
@@ -98,7 +123,7 @@ export default function App() {
           })}
         </div>
         <div className={styles.mainSection}>
-          {loginData.successfulLogin ? (
+          {localData.auth.successfulLogin ? (
             (() => {
               switch (activeSection.code) {
                 case SECTIONS[0].code:
