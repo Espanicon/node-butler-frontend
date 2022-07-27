@@ -45,6 +45,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  margin-right: 10px;
 }
 .proposalInfo > p {
   margin: 0px 5px 0px 0px;
@@ -57,12 +58,15 @@
   border-radius: 999999px;
   margin: 0px;
   padding: 0px;
-  width: 60px;
-  height: 60px;
-  overflow: hidden;
+  width: 65px;
+  height: 65px;
+  /* overflow: hidden; */
 }
 .proposalImage {
   width: 60px;
   min-width: 60px;
   min-height: 60px;
 }
+/* devices less than 640px */
+/* @media (max-width: 639.98px) { */
+/* } */
