@@ -121,7 +121,7 @@ async function getCPSPeriodStatus() {
   }
 }
 
-async function getProposalKeysByStatus(status) {
+async function getCPSProposalKeysByStatus(status) {
   const JSONRPCObject = makeICXCallRequestObj(
     "get_proposals_keys_by_status",
     { _status: status },
@@ -145,7 +145,7 @@ async function getProposalKeysByStatus(status) {
   }
 }
 
-async function getProposalDetailsByHash(hash) {
+async function getCPSProposalDetailsByHash(hash) {
   const JSONRPCObject = makeICXCallRequestObj(
     "get_proposal_details_by_hash",
     { _ipfs_key: hash },
@@ -165,7 +165,24 @@ async function getProposalDetailsByHash(hash) {
   }
 }
 
-async function getVoteResultsByHash(hash) {
+async function getCPSProposalFullInfoByHash(hash) {
+  const url = {
+    root: "gateway.ipfs.io",
+    route: "/ipfs/" + hash
+  };
+  const request = await customRequest(url.route, false, url.root);
+  if (request == null) {
+    // Error was raised and handled inside customRequest, the returned value
+    // is null. Here we continue returning null and let the code logic
+    // after this handle the null values in the most appropiate way depending
+    // on the code logic
+    return request;
+  } else {
+    return request;
+  }
+}
+
+async function getCPSVoteResultsByHash(hash) {
   const JSONRPCObject = makeICXCallRequestObj(
     "get_vote_result",
     { _ipfs_key: hash },
@@ -185,7 +202,7 @@ async function getVoteResultsByHash(hash) {
   }
 }
 
-async function getAllProposals() {
+async function getAllCPSProposals() {
   let proposals = {
     _active: [],
     _completed: [],
@@ -195,11 +212,11 @@ async function getAllProposals() {
   };
 
   for (let eachStatus of statusType) {
-    const proposalsKeys = await getProposalKeysByStatus(eachStatus);
+    const proposalsKeys = await getCPSProposalKeysByStatus(eachStatus);
 
     for (let eachProposal of proposalsKeys) {
-      const proposal = await getProposalDetailsByHash(eachProposal);
-      const comments = await getVoteResultsByHash(eachProposal);
+      const proposal = await getCPSProposalDetailsByHash(eachProposal);
+      const comments = await getCPSVoteResultsByHash(eachProposal);
 
       proposals[eachStatus].push({
         proposal: proposal,
@@ -463,7 +480,6 @@ const nodeButlerRoutes = {
   cps: "/node-butler/cps-proposals"
 };
 async function getCPSProposalsFromNB() {
-  console.log("getCPSProposalsFromNB");
   const request = await customRequest(
     nodeButlerRoutes.cps,
     false,
@@ -492,10 +508,11 @@ async function getCPSProposalsFromNB() {
 const lib = {
   cps: {
     getCPSPeriodStatus,
-    getProposalKeysByStatus,
-    getProposalDetailsByHash,
-    getVoteResultsByHash,
-    getAllProposals
+    getCPSProposalKeysByStatus,
+    getCPSProposalDetailsByHash,
+    getCPSVoteResultsByHash,
+    getAllCPSProposals,
+    getCPSProposalFullInfoByHash
   },
   governance: {
     getScoreApi,

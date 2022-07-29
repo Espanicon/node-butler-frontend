@@ -16,8 +16,6 @@ export default function GenericModal({ isOpen, onClose, children }) {
       onClick={handleOnClose}
     >
       <div className={styles.main} onClick={onMainClick}>
-        <h1>TEST TITLE</h1>
-        <p>test paragraph</p>
         {children}
       </div>
     </div>

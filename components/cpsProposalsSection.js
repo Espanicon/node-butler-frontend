@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/cpsProposalsSection.module.css";
 import { Hr } from "./customComponents";
-import { lib } from "../utils/espanicon-sdk/lib-no-sdk";
+import { lib, cps } from "../utils/espanicon-sdk/lib-no-sdk";
 import { v4 as uuidv4 } from "uuid";
 import GenericModal from "./genericModal";
 const { getCPSProposalsFromNB } = lib;
+const { getCPSProposalFullInfoByHash } = cps;
 
 export default function CPSProposalsSection({ activeSection }) {
   const [CPSProposals, setCPSProposals] = useState(null);
-  const [proposalInfo, setProposalInfo] = useState(null);
+  const [proposalInfo, setProposalInfo] = useState(false);
+  const [proposalIndex, setProposalIndex] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   function handleCPSProposals(cpsData) {
@@ -18,15 +20,22 @@ export default function CPSProposalsSection({ activeSection }) {
 
   function handleModalOnClose() {
     setIsOpen(false);
+    setProposalInfo(false);
+    setProposalIndex(false);
   }
 
-  function handleModalOnOpen(index) {
-    // fetch proposal summary
-
-    // set proposal summary and comments in the proposalInfo state
-
+  async function handleModalOnOpen(index) {
     // open modal
     setIsOpen(true);
+    setProposalIndex(index);
+
+    // fetch proposal summary
+    const proposalFullInfo = await getCPSProposalFullInfoByHash(
+      CPSProposals[index]["ipfs_hash"]
+    );
+
+    // set proposal summary and comments in the proposalInfo state
+    setProposalInfo(proposalFullInfo);
   }
 
   useEffect(() => {
@@ -45,26 +54,25 @@ export default function CPSProposalsSection({ activeSection }) {
         <p>
           Here you can see a list of all CPS Proposals, each proposal can have
           one of the following <i>status</i>:
-          <ul>
-            <li>
-              <b>Active:</b> Proposal has been approved and is currently
-              ongoing.
-            </li>
-            <li>
-              <b>Completed:</b> Proposal was approved during voting period and
-              was completed successfully.
-            </li>
-            <li>
-              <b>Disqualified:</b> Proposal wasnt approved during voting period.
-            </li>
-            <li>
-              <b>Paused:</b> Proposal has been paused.
-            </li>
-            <li>
-              <b>Pending:</b> Proposal currently in voting period.
-            </li>
-          </ul>
         </p>
+        <ul>
+          <li>
+            <b>Active:</b> Proposal has been approved and is currently ongoing.
+          </li>
+          <li>
+            <b>Completed:</b> Proposal was approved during voting period and was
+            completed successfully.
+          </li>
+          <li>
+            <b>Disqualified:</b> Proposal got disqualified.
+          </li>
+          <li>
+            <b>Paused:</b> Proposal has been paused.
+          </li>
+          <li>
+            <b>Pending:</b> Proposal currently in voting period.
+          </li>
+        </ul>
       </div>
       <Hr />
       <div className={styles.body}>
@@ -169,79 +177,88 @@ export default function CPSProposalsSection({ activeSection }) {
         )}
       </div>
       <GenericModal isOpen={isOpen} onClose={handleModalOnClose}>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
-        <p>
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum."
-        </p>
+        {proposalInfo === false || proposalInfo == null ? (
+          <div
+            className={`${styles.proposalContainer} ${styles.proposalContainerIsWaiting}`}
+          >
+            <div className={styles.imgLoading}>
+              {[1, 2, 3, 4, 5].map(foo => (
+                <div className={styles.imgLoadingItem} key={uuidv4()}></div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className={styles.proposalContainer}>
+            <h2>{proposalInfo.projectName}</h2>
+            <div
+              className={styles.proposalContainerInfo}
+              dangerouslySetInnerHTML={{ __html: proposalInfo.description }}
+            ></div>
+            <div className={styles.proposalContainerComments}>
+              <Hr />
+              <h3>Votes:</h3>
+              {proposalIndex === false ? (
+                <>
+                  <p>Fetching comments</p>
+                  <div className={styles.imgLoading}>
+                    {[1, 2, 3, 4, 5].map(foo => (
+                      <div
+                        className={styles.imgLoadingItem}
+                        key={uuidv4()}
+                      ></div>
+                    ))}
+                  </div>
+                </>
+              ) : CPSProposals[proposalIndex].comments.length < 1 ? (
+                <p>No comments</p>
+              ) : (
+                <CommentsSection
+                  commentArray={CPSProposals[proposalIndex].comments}
+                />
+              )}
+            </div>
+          </div>
+        )}
       </GenericModal>
     </div>
   );
+}
+
+function CommentsSection({ commentArray }) {
+  let voteStatus;
+  return commentArray.map(commentData => {
+    switch (commentData["vote"]) {
+      case "_approve":
+        voteStatus = "Approved";
+        break;
+      case "_reject":
+        voteStatus = "Reject";
+        break;
+      case "_abstain":
+        voteStatus = "Abstain";
+        break;
+      default:
+        voteStatus = "Uknown";
+    }
+    return (
+      <div className={styles.commentSectionContainer} key={uuidv4()}>
+        <p style={{ marginLeft: "5px" }}>
+          <b>Prep name:</b> {commentData["prep_name"]}
+        </p>
+        <p style={{ marginLeft: "5px" }}>
+          <b>Vote:</b> {voteStatus}
+        </p>
+        <div style={{ display: "flex", flexFlow: "row wrap" }}>
+          <p style={{ marginRight: "5px", marginLeft: "5px" }}>
+            <b>Comment:</b>{" "}
+          </p>
+          <span
+            dangerouslySetInnerHTML={{
+              __html: commentData["vote_reason"]
+            }}
+          ></span>
+        </div>
+      </div>
+    );
+  });
 }
