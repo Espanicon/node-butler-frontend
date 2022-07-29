@@ -1,0 +1,28 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 40px 0px;
+}
+.modalClosed {
+  display: none;
+}
+.modalOpen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main {
+  max-width: 80%;
+  max-height: 100%;
+  background-color: #ffffff;
+  padding: 10px;
+  border: 2px solid #c7c7c7;
+  border-radius: 4px;
+  overflow: scroll;
+  cursor: text;
+}
