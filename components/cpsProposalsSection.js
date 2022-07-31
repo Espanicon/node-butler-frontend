@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/cpsProposalsSection.module.css";
 import { Hr } from "./customComponents";
-import { lib, cps } from "../utils/espanicon-sdk/lib-no-sdk";
+import { nodeButler, cps } from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import GenericModal from "./genericModal";
-const { getCPSProposalsFromNB } = lib;
+const { getCPSProposalsFromNB } = nodeButler;
 const { getCPSProposalFullInfoByHash } = cps;
 
 export default function CPSProposalsSection({ activeSection }) {
