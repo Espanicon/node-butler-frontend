@@ -1,41 +1,38 @@
 // utils/customLib.js
 //
 // Imports
-import webLib from "@espanicon/espanicon-sdk";
-const { customFetch, scores } = webLib.lib;
+import EspaniconSDKWeb from "@espanicon/espanicon-sdk";
+const webLib = new EspaniconSDKWeb();
 const {
-  getScoreApi,
-  getIcxBalance,
-  getTxResult,
-  getTxByHash,
-  getPrep,
-  parsePrepData,
-  getPreps,
-  getBonderList,
-  setBonderList,
-  getLastBlock
-} = webLib.governance;
-
-const {
-  getCPSPeriodStatus,
-  getCPSProposalKeysByStatus,
-  getCPSProposalDetailsByHash,
-  getCPSProposalVoteResultsByHash,
-  getAllCPSProposals
-} = webLib.cps;
-const {
-  getScoreStatus,
-  getStepPrice,
-  getStepCosts,
-  getMaxStepLimit,
-  isInScoreBlackList,
-  getVersion,
-  getRevision,
-  getProposal,
-  getProposals,
-  approveNetworkProposal,
-  rejectNetworkProposal
-} = webLib.governance2;
+  getScoreApi, // tested
+  getIcxBalance, // tested
+  getTxResult, // tested
+  getTxByHash, // tested
+  getPrep, // tested
+  parsePrepData, // TODO:cannot be tested with current setup
+  getPreps, // tested
+  getBonderList, // tested
+  setBonderList, // tested
+  getLastBlock, // tested
+  getCPSPeriodStatus, // tested
+  getCPSProposalKeysByStatus, // tested
+  getCPSProposalDetailsByHash, // tested
+  getCPSProposalVoteResultsByHash, // tested
+  getAllCPSProposals, //tested TODO: is commented out because it takes too long
+  getScoreStatus, // tested
+  getStepPrice, // tested
+  getStepCosts, // tested
+  getMaxStepLimit, // tested
+  isInScoreBlackList, // tested
+  getVersion, // tested
+  getRevision, // tested
+  getProposal, // tested TODO: returns error on valid proposals
+  getProposals, // tested
+  approveNetworkProposal, // tested
+  rejectNetworkProposal, //tested
+  scores,
+  queryMethod: customFetch
+} = webLib;
 
 // CPS methods
 //
