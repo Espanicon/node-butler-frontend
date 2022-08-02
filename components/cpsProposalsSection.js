@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/cpsProposalsSection.module.css";
 import { Hr } from "./customComponents";
-import { nodeButler, cps } from "../utils/customLib";
+import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import GenericModal from "./genericModal";
-const { getCPSProposalsFromNB } = nodeButler;
-const { getCPSProposalFullInfoByHash } = cps;
+
+const nodeButlerLib = new NodeButlerSDK();
+const { getCPSProposalsFromNB, getCPSProposalFullInfoByHash } = nodeButlerLib;
 
 export default function CPSProposalsSection({ activeSection }) {
   const [CPSProposals, setCPSProposals] = useState(null);
