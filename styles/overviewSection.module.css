@@ -18,6 +18,18 @@
   max-width: 800px;
   align-self: center;
 }
+.topSectionInfo {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+}
 .topSectionInfo > p,
 .bottomSection p {
   margin: 2px 0px;

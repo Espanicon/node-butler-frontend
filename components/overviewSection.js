@@ -1,31 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../styles/overviewSection.module.css";
 import { Hr, LoadingComponent } from "./customComponents";
 import NodeButlerSDK from "../utils/customLib";
+import { v4 as uuidv4 } from "uuid";
+import utils from "../utils/utils";
 
 const nodeButlerLib = new NodeButlerSDK("api.espanicon.team");
 const { getPrep, parsePrepData } = nodeButlerLib;
 
-const MOCK_DATA = {
-  logo: "/images/icon-logo.png",
-  name: "Fun node",
-  address: "hx34e2023a4..",
-  country: "US",
-  email: "foo@bar.com",
-  details: "https;//banana.com/detail.json",
-  grade: "Main",
-  status: "Active",
-  penalty: "none",
-  delegated: 324050,
-  bond: 20000,
-  power: 364555,
-  irep: 14000,
-  irepUpdateBlockHeight: 15634955,
-  lastHeight: 52231259,
-  totalBlocks: 517449,
-  validatedBlocks: 514433,
-  p2pEndpoint: "127.0.0.1:9000"
-};
 const CODE = `{
   representative: {
     logo:{
@@ -94,11 +76,31 @@ const DETAILSJSON = {
   }
 };
 
+const BONDER_LIST = [
+  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
+  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
+  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
+  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
+  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+];
 export default function OverviewSection({ activeSection }) {
   const [prepLogo, setPrepLogo] = useState(null);
   const [overviewState, setOverviewState] = useState(null);
   const [prepDetailsState, setPrepDetailsState] = useState(null);
   const [bondedInfoState, setBondedInfoState] = useState(null);
+
+  useEffect(() => {
+    async function runAsync() {
+      const prepData = await getPrep(
+        "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+      );
+      const parsedPrepData = parsePrepData(prepData);
+      console.log(parsedPrepData);
+      setOverviewState(parsedPrepData);
+    }
+
+    runAsync();
+  }, []);
 
   return (
     <div className={styles.main}>
@@ -108,11 +110,16 @@ export default function OverviewSection({ activeSection }) {
       ) : (
         <div className={styles.topSection}>
           <div className={styles.topSectionInfo}>
-            <p>Node name: {MOCK_DATA.name}</p>
-            <p>Node address: {MOCK_DATA.address}</p>
-            <p>Country: {MOCK_DATA.country}</p>
-            <p>Email: {MOCK_DATA.email}</p>
-            <p>Details.json: {MOCK_DATA.details}</p>
+            <p>{`Node name: ${overviewState.name}`}</p>
+            <p>{`Node address: ${overviewState.address}`}</p>
+            <p>{`Country: ${overviewState.country}`}</p>
+            <p>{`Email: ${overviewState.email}`}</p>
+            <p>
+              {`Details.json: `}
+              <a href={overviewState.details} target="_blank">
+                {overviewState.details}
+              </a>
+            </p>
           </div>
           <div className={styles.topSectionLogo}>
             <img src={prepLogo === null ? "/images/icon-logo.png" : ""} />
@@ -121,25 +128,25 @@ export default function OverviewSection({ activeSection }) {
       )}
       <Hr />
       <h2>PRep Details:</h2>
-      {prepDetailsState === null ? (
+      {overviewState === null ? (
         <LoadingComponent />
       ) : (
         <div className={styles.bottomSection}>
           <div className={styles.bottomSectionRow}>
-            <p>Grade: {MOCK_DATA.grade}</p>
-            <p>Status: {MOCK_DATA.status}</p>
-            <p>Penalty: {MOCK_DATA.penalty}</p>
-            <p>Delegated: {MOCK_DATA.delegated}</p>
-            <p>Bond: {MOCK_DATA.bond}</p>
-            <p>Power: {MOCK_DATA.power}</p>
+            <p>Grade: {overviewState.grade}</p>
+            <p>Status: {overviewState.status}</p>
+            <p>Penalty: {overviewState.penalty}</p>
+            <p>Delegated: {overviewState.delegated}</p>
+            <p>Bond: {overviewState.bonded}</p>
+            <p>Power: {overviewState.power}</p>
           </div>
           <div className={styles.bottomSectionRow}>
-            <p>Irep: {MOCK_DATA.irep}</p>
-            <p>irepUpdateBlockHeight: {MOCK_DATA.irepUpdateBlockHeight}</p>
-            <p>lastHeight: {MOCK_DATA.lastHeight}</p>
-            <p>totalBlocks: {MOCK_DATA.totalBlocks}</p>
-            <p>validatedBlocks: {MOCK_DATA.validatedBlocks}</p>
-            <p>p2pEndpoint: {MOCK_DATA.p2pEndpoint}</p>
+            <p>Irep: {overviewState.irep}</p>
+            <p>irepUpdateBlockHeight: {overviewState.irepUpdateBlockHeight}</p>
+            <p>lastHeight: {overviewState.lastHeight}</p>
+            <p>totalBlocks: {overviewState.totalBlocks}</p>
+            <p>validatedBlocks: {overviewState.validatedBlocks}</p>
+            <p>p2pEndpoint: {overviewState.p2pEndpoint}</p>
           </div>
         </div>
       )}
@@ -149,57 +156,25 @@ export default function OverviewSection({ activeSection }) {
         <p>
           A maximum of 10 addresses are allowed to be added to the{" "}
           <i>bonderList</i> of your node. You can use the following form to
-          update your <i>bonderList</i> configuration, add up to 10 coma (,)
-          separated addresses and submit the form, a transaction will be signed
-          with your address using your preffered wallet software, the details of
-          the transaction will be shown in the wallet popup window before
-          approving the transaction.
+          update your <i>bonderList</i> configuration, a transaction will be
+          signed with your address using your preffered wallet software, the
+          details of the transaction will be shown in the wallet popup window
+          before approving the transaction.
         </p>
         <p>Current wallets boding for your node:</p>
         {bondedInfoState === null ? (
           <LoadingComponent />
         ) : (
           <ul>
-            <li>
-              <a
-                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-                target="_blank"
-              >
-                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-                target="_blank"
-              >
-                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-                target="_blank"
-              >
-                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-                target="_blank"
-              >
-                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-              </a>
-            </li>
-            <li>
-              <a
-                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-                target="_blank"
-              >
-                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-              </a>
-            </li>
+            {bondedInfoState.map(wallet => {
+              return (
+                <li key={uuidv4()}>
+                  <a href={utils.parseBonderWallet(wallet)} target="_blank">
+                    {wallet}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         )}
         <div className={styles.setPrepForm}>
@@ -213,16 +188,49 @@ export default function OverviewSection({ activeSection }) {
             <table className={styles.tableSetPrep}>
               <thead>
                 <tr>
-                  <th>Bonder List:</th>
+                  <th>Bonder 1:</th>
+                  <th>Bonder 2:</th>
+                  <th>Bonder 3:</th>
+                  <th>Bonder 4:</th>
+                  <th>Bonder 5:</th>
+                  <th>Bonder 6:</th>
+                  <th>Bonder 7:</th>
+                  <th>Bonder 8:</th>
+                  <th>Bonder 9:</th>
+                  <th>Bonder 10:</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>
-                    <input
-                      placeholder="hx343e935.., hx2320caf4510..."
-                      type="text"
-                    />
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
+                  </td>
+                  <td>
+                    <input type="text" />
                   </td>
                 </tr>
               </tbody>
