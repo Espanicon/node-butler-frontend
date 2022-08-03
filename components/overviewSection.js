@@ -1,6 +1,10 @@
 import { useState } from "react";
 import styles from "../styles/overviewSection.module.css";
-import { Hr } from "./customComponents";
+import { Hr, LoadingComponent } from "./customComponents";
+import NodeButlerSDK from "../utils/customLib";
+
+const nodeButlerLib = new NodeButlerSDK("api.espanicon.team");
+const { getPrep, parsePrepData } = nodeButlerLib;
 
 const MOCK_DATA = {
   logo: "/images/icon-logo.png",
@@ -92,41 +96,53 @@ const DETAILSJSON = {
 
 export default function OverviewSection({ activeSection }) {
   const [prepLogo, setPrepLogo] = useState(null);
+  const [overviewState, setOverviewState] = useState(null);
+  const [prepDetailsState, setPrepDetailsState] = useState(null);
+  const [bondedInfoState, setBondedInfoState] = useState(null);
+
   return (
     <div className={styles.main}>
       <h2>Overview</h2>
-      <div className={styles.topSection}>
-        <div className={styles.topSectionInfo}>
-          <p>Node name: {MOCK_DATA.name}</p>
-          <p>Node address: {MOCK_DATA.address}</p>
-          <p>Country: {MOCK_DATA.country}</p>
-          <p>Email: {MOCK_DATA.email}</p>
-          <p>Details.json: {MOCK_DATA.details}</p>
+      {overviewState === null ? (
+        <LoadingComponent />
+      ) : (
+        <div className={styles.topSection}>
+          <div className={styles.topSectionInfo}>
+            <p>Node name: {MOCK_DATA.name}</p>
+            <p>Node address: {MOCK_DATA.address}</p>
+            <p>Country: {MOCK_DATA.country}</p>
+            <p>Email: {MOCK_DATA.email}</p>
+            <p>Details.json: {MOCK_DATA.details}</p>
+          </div>
+          <div className={styles.topSectionLogo}>
+            <img src={prepLogo === null ? "/images/icon-logo.png" : ""} />
+          </div>
         </div>
-        <div className={styles.topSectionLogo}>
-          <img src={prepLogo === null ? "/images/icon-logo.png" : ""} />
-        </div>
-      </div>
+      )}
       <Hr />
       <h2>PRep Details:</h2>
-      <div className={styles.bottomSection}>
-        <div className={styles.bottomSectionRow}>
-          <p>Grade: {MOCK_DATA.grade}</p>
-          <p>Status: {MOCK_DATA.status}</p>
-          <p>Penalty: {MOCK_DATA.penalty}</p>
-          <p>Delegated: {MOCK_DATA.delegated}</p>
-          <p>Bond: {MOCK_DATA.bond}</p>
-          <p>Power: {MOCK_DATA.power}</p>
+      {prepDetailsState === null ? (
+        <LoadingComponent />
+      ) : (
+        <div className={styles.bottomSection}>
+          <div className={styles.bottomSectionRow}>
+            <p>Grade: {MOCK_DATA.grade}</p>
+            <p>Status: {MOCK_DATA.status}</p>
+            <p>Penalty: {MOCK_DATA.penalty}</p>
+            <p>Delegated: {MOCK_DATA.delegated}</p>
+            <p>Bond: {MOCK_DATA.bond}</p>
+            <p>Power: {MOCK_DATA.power}</p>
+          </div>
+          <div className={styles.bottomSectionRow}>
+            <p>Irep: {MOCK_DATA.irep}</p>
+            <p>irepUpdateBlockHeight: {MOCK_DATA.irepUpdateBlockHeight}</p>
+            <p>lastHeight: {MOCK_DATA.lastHeight}</p>
+            <p>totalBlocks: {MOCK_DATA.totalBlocks}</p>
+            <p>validatedBlocks: {MOCK_DATA.validatedBlocks}</p>
+            <p>p2pEndpoint: {MOCK_DATA.p2pEndpoint}</p>
+          </div>
         </div>
-        <div className={styles.bottomSectionRow}>
-          <p>Irep: {MOCK_DATA.irep}</p>
-          <p>irepUpdateBlockHeight: {MOCK_DATA.irepUpdateBlockHeight}</p>
-          <p>lastHeight: {MOCK_DATA.lastHeight}</p>
-          <p>totalBlocks: {MOCK_DATA.totalBlocks}</p>
-          <p>validatedBlocks: {MOCK_DATA.validatedBlocks}</p>
-          <p>p2pEndpoint: {MOCK_DATA.p2pEndpoint}</p>
-        </div>
-      </div>
+      )}
       <Hr />
       <div className={styles.defaultSection}>
         <h2>Bonded Info:</h2>
@@ -140,48 +156,52 @@ export default function OverviewSection({ activeSection }) {
           approving the transaction.
         </p>
         <p>Current wallets boding for your node:</p>
-        <ul>
-          <li>
-            <a
-              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-              target="_blank"
-            >
-              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-              target="_blank"
-            >
-              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-              target="_blank"
-            >
-              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-              target="_blank"
-            >
-              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-              target="_blank"
-            >
-              hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
-            </a>
-          </li>
-        </ul>
+        {bondedInfoState === null ? (
+          <LoadingComponent />
+        ) : (
+          <ul>
+            <li>
+              <a
+                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+                target="_blank"
+              >
+                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+                target="_blank"
+              >
+                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+                target="_blank"
+              >
+                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+                target="_blank"
+              >
+                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://tracker.icon.foundation/address/hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
+                target="_blank"
+              >
+                hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9
+              </a>
+            </li>
+          </ul>
+        )}
         <div className={styles.setPrepForm}>
           <div
             style={{

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/cpsProposalsSection.module.css";
-import { Hr } from "./customComponents";
+import { Hr, LoadingComponent } from "./customComponents";
 import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import GenericModal from "./genericModal";
@@ -78,11 +78,7 @@ export default function CPSProposalsSection({ activeSection }) {
       <Hr />
       <div className={styles.body}>
         {CPSProposals == null ? (
-          <div className={styles.imgLoading}>
-            {[1, 2, 3, 4, 5].map(foo => (
-              <div className={styles.imgLoadingItem} key={uuidv4()}></div>
-            ))}
-          </div>
+          <LoadingComponent />
         ) : (
           CPSProposals.map((eachProposals, index) => {
             let statusTitle;
