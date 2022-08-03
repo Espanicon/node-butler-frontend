@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "../styles/contractExplorerSection.module.css";
 import { Hr } from "./customComponents";
 
-export default function ContractExplorerSection({ activeSection }) {
+export default function ContractExplorerSection({ localData }) {
   return (
     <div className={styles.main}>
       <h2>Contract Explorer</h2>

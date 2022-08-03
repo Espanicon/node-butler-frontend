@@ -8,7 +8,7 @@ import GenericModal from "./genericModal";
 const nodeButlerLib = new NodeButlerSDK();
 const { getCPSProposalsFromNB, getCPSProposalFullInfoByHash } = nodeButlerLib;
 
-export default function CPSProposalsSection({ activeSection }) {
+export default function CPSProposalsSection({ localData }) {
   const [CPSProposals, setCPSProposals] = useState(null);
   const [proposalInfo, setProposalInfo] = useState(false);
   const [proposalIndex, setProposalIndex] = useState(false);

@@ -6,84 +6,13 @@ import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
 
 const nodeButlerLib = new NodeButlerSDK("api.espanicon.team");
-const { getPrep, parsePrepData } = nodeButlerLib;
+const { getPrep, parsePrepData, getBonderList, queryMethod } = nodeButlerLib;
 
-const CODE = `{
-  representative: {
-    logo:{
-    logo_256: "http://somesite.com/logo-small.jpg",
-    logo_1024: "http://somesite.com/logo-big.jpg",
-    logo_svg: "http://somesite.com/logo.svg"
-  },
-  media: {
-    steemit: "",
-    twitter: "",
-    youtube: "",
-    facebook: "",
-    github: "",
-    reddit: "",
-    keybase: "",
-    telegram: "",
-    wechat: ""
-  }
-}`;
+const CODE = utils.samples.details;
+const SETPREP = utils.samples.setPrep;
+const DETAILSJSON = utils.samples.details2;
 
-const SETPREP = `{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "icx_sendTransaction",
-    "params": {
-        "data": {
-            "method": "setPRep",
-            "params": {
-                "name": "ABC Node",
-                "email": "abc@example.com",
-                "country": "KOR",
-                "city": "Seoul",
-                "website": "https://abc.example.com/",
-                "details": "https://abc.example.com/details/",
-                "nodeAddress": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb"
-            }
-        },
-    }
-}`;
-const DETAILSJSON = {
-  representative: {
-    logo: {
-      logo_256: "http://somesite.com/logo-small.jpg",
-      logo_1024: "http://somesite.com/logo-big.jpg",
-      logo_svg: "http://somesite.com/logo.svg"
-    },
-    media: {
-      steemit: "",
-      twitter: "",
-      youtube: "",
-      facebook: "",
-      github: "",
-      reddit: "",
-      keybase: "",
-      telegram: "",
-      wechat: ""
-    }
-  },
-  server: {
-    location: {
-      country: "USA",
-      city: "Houston"
-    },
-    server_type: "cloud",
-    api_endpoint: "127.0.0.1:9000"
-  }
-};
-
-const BONDER_LIST = [
-  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
-  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
-  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
-  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9",
-  "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-];
-export default function OverviewSection({ activeSection }) {
+export default function OverviewSection({ localData }) {
   const [prepLogo, setPrepLogo] = useState(null);
   const [overviewState, setOverviewState] = useState(null);
   const [prepDetailsState, setPrepDetailsState] = useState(null);
@@ -91,12 +20,30 @@ export default function OverviewSection({ activeSection }) {
 
   useEffect(() => {
     async function runAsync() {
-      const prepData = await getPrep(
-        "hxdc35f82a3a943e040ae2b9ab2baa2118781b2bc9"
-      );
+      // get overall prep data
+      const prepData = await getPrep(localData.auth.selectedWallet);
       const parsedPrepData = parsePrepData(prepData);
-      console.log(parsedPrepData);
+
+      // get bonder data
+      const bonderList = await getBonderList(localData.auth.selectedWallet);
+      const parsedBonderList = utils.parseGetBonderList(bonderList);
+
+      // get logo
+      const parsedDetailsLink = utils.prepareForQueryMethod(
+        parsedPrepData.details
+      );
+      const logoUrl = await queryMethod(
+        parsedDetailsLink.pathname,
+        false,
+        parsedDetailsLink.hostname,
+        true,
+        false,
+        false
+      );
+
+      // update states
       setOverviewState(parsedPrepData);
+      setBondedInfoState(parsedBonderList);
     }
 
     runAsync();

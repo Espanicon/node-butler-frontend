@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "../styles/networkProposalsSection.module.css";
 import { Hr } from "./customComponents";
 
-export default function NetworkProposalsSection({ activeSection }) {
+export default function NetworkProposalsSection({ localData }) {
   return (
     <div className={styles.main}>
       <h2>Network Proposals</h2>

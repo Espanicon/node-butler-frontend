@@ -11,6 +11,16 @@ import NetworkProposalsSection from "../components/networkProposalsSection";
 import ContractExplorerSection from "../components/contractExplorerSection";
 import styles from "../styles/app.module.css";
 
+// MOCK DATA
+//
+const MOCK_DATA = {
+  auth: {
+    selectedWallet: "hx9fa9d224306b0722099d30471b3c2306421aead7",
+    methodUsed: "ICONEX",
+    bip44Path: null,
+    successfulLogin: true
+  }
+};
 // Functions
 //
 function getSections() {
@@ -127,17 +137,17 @@ export default function App() {
             (() => {
               switch (activeSection.code) {
                 case SECTIONS[0].code:
-                  return <OverviewSection activeSection={activeSection} />;
+                  // return <OverviewSection localData={localData} />;
+                  return <OverviewSection localData={MOCK_DATA} />;
                 case SECTIONS[1].code:
-                  return <CPSProposalsSection activeSection={activeSection} />;
+                  // return <CPSProposalsSection localData={localData} />;
+                  return <CPSProposalsSection localData={MOCK_DATA} />;
                 case SECTIONS[2].code:
-                  return (
-                    <NetworkProposalsSection activeSection={activeSection} />
-                  );
+                  // return <NetworkProposalsSection localData={localData} />;
+                  return <NetworkProposalsSection localData={MOCK_DATA} />;
                 case SECTIONS[3].code:
-                  return (
-                    <ContractExplorerSection activeSection={activeSection} />
-                  );
+                  // return <ContractExplorerSection localData={localData} />;
+                  return <ContractExplorerSection localData={MOCK_DATA} />;
                 default:
                   return <div>404 Unexpected Error</div>;
               }
