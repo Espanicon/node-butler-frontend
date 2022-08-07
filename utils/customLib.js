@@ -12,6 +12,10 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
       this
     );
     this.getCPSProposalsFromNB = this.getCPSProposalsFromNB.bind(this);
+    this.getPrepsFromNB = this.getPrepsFromNB.bind(this);
+    this.getPrepFromNB = this.getPrepFromNB.bind(this);
+    this.parsePrepFromNB = this.parsePrepFromNB.bind(this);
+    this.getPrepLogoUrl = this.getPrepLogoUrl.bind(this);
   }
   async getCPSProposalFullInfoByHash(hash) {
     const url = {
@@ -36,5 +40,77 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
       this.scores.apiHostnames.espanicon
     );
     return request;
+  }
+  async getPrepsFromNB() {
+    const request = await this.queryMethod(
+      "/node-butler/preps",
+      false,
+      this.scores.apiHostnames.espanicon
+    );
+    return request;
+  }
+  async getPrepFromNB(prepAddress) {
+    const request = await this.queryMethod(
+      `/node-butler/preps/${prepAddress}`,
+      false,
+      this.scores.apiHostnames.espanicon
+    );
+
+    if (request.length < 1) {
+      return null;
+    } else {
+      return request[0];
+    }
+  }
+  parsePrepFromNB(prep) {
+    let parsedPrep = { ...prep };
+    parsedPrep.details = prep.has_valid_details
+      ? JSON.parse(prep.details)
+      : null;
+    return parsedPrep;
+  }
+
+  getPrepLogoUrl(prepParsedData) {
+    let logoUrl = null;
+
+    try {
+      if (prepParsedData.details.representative.logo == null) {
+        // if the prep details doesnt have a logo entry
+      } else {
+        // if the prep details have a logo entry
+        if (
+          prepParsedData.details.representative.logo.logo_1024 == null ||
+          prepParsedData.details.representative.logo.logo_1024 === ""
+        ) {
+          // if the logo_1024 entry is invalid check the rest
+          if (
+            prepParsedData.details.representative.logo.logo_256 == null ||
+            prepParsedData.details.representative.logo.logo_256 === ""
+          ) {
+            // if the logo_256 entry is invalid check the rest
+            if (
+              prepParsedData.details.representative.logo.logo_svg == null ||
+              prepParsedData.details.representative.logo.logo_svg === ""
+              // if the logo_svg entry is invalid then there is no valid logo entry
+            ) {
+            } else {
+              // if the logo_svg entry is valid use it
+              logoUrl = prepParsedData.details.representative.logo.logo_svg;
+            }
+          } else {
+            // if the logo_256 entry is valid use it
+            logoUrl = prepParsedData.details.representative.logo.logo_256;
+          }
+        } else {
+          // if the logo_1024 entry is valid use it
+          logoUrl = prepParsedData.details.representative.logo.logo_1024;
+        }
+      }
+    } catch (err) {
+      console.log("error parsing prep details data for logo");
+      console.log(err);
+    }
+
+    return logoUrl;
   }
 }

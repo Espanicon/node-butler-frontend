@@ -6,7 +6,14 @@ import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
 
 const nodeButlerLib = new NodeButlerSDK("api.espanicon.team");
-const { getPrep, parsePrepData, getBonderList, queryMethod } = nodeButlerLib;
+const {
+  getPrep,
+  parsePrepData,
+  getBonderList,
+  getPrepFromNB,
+  parsePrepFromNB,
+  getPrepLogoUrl
+} = nodeButlerLib;
 
 const CODE = utils.samples.details;
 const SETPREP = utils.samples.setPrep;
@@ -20,26 +27,27 @@ export default function OverviewSection({ localData }) {
 
   useEffect(() => {
     async function runAsync() {
+      const loggedPrep = localData.auth.successfulLogin
+        ? localData.auth.selectedWallet
+        : null;
       // get overall prep data
-      const prepData = await getPrep(localData.auth.selectedWallet);
+      const prepData = await getPrep(loggedPrep);
       const parsedPrepData = parsePrepData(prepData);
 
       // get bonder data
       const bonderList = await getBonderList(localData.auth.selectedWallet);
       const parsedBonderList = utils.parseGetBonderList(bonderList);
 
-      // get logo
-      const parsedDetailsLink = utils.prepareForQueryMethod(
-        parsedPrepData.details
-      );
-      const logoUrl = await queryMethod(
-        parsedDetailsLink.pathname,
-        false,
-        parsedDetailsLink.hostname,
-        true,
-        false,
-        false
-      );
+      // get prep details data
+      const prepDetails = await getPrepFromNB(loggedPrep);
+      const parsedPrepDetails = parsePrepFromNB(prepDetails);
+      console.log("parsed details");
+      console.log(parsedPrepDetails);
+
+      // get prep logo data
+      const prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
+      console.log("prep logo url");
+      console.log(prepLogoUrl);
 
       // update states
       setOverviewState(parsedPrepData);
