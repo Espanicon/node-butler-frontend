@@ -5,6 +5,8 @@ import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
 
+const ICON_LOGO = "/images/icon-logo.png";
+
 const nodeButlerLib = new NodeButlerSDK("api.espanicon.team");
 const {
   getPrep,
@@ -25,6 +27,10 @@ export default function OverviewSection({ localData }) {
   const [prepDetailsState, setPrepDetailsState] = useState(null);
   const [bondedInfoState, setBondedInfoState] = useState(null);
 
+  function setImgError(evnt) {
+    evnt.currentTarget.src = ICON_LOGO;
+  }
+
   useEffect(() => {
     async function runAsync() {
       const loggedPrep = localData.auth.successfulLogin
@@ -41,13 +47,10 @@ export default function OverviewSection({ localData }) {
       // get prep details data
       const prepDetails = await getPrepFromNB(loggedPrep);
       const parsedPrepDetails = parsePrepFromNB(prepDetails);
-      console.log("parsed details");
-      console.log(parsedPrepDetails);
 
       // get prep logo data
       const prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
-      console.log("prep logo url");
-      console.log(prepLogoUrl);
+      setPrepLogo(prepLogoUrl);
 
       // update states
       setOverviewState(parsedPrepData);
@@ -77,7 +80,10 @@ export default function OverviewSection({ localData }) {
             </p>
           </div>
           <div className={styles.topSectionLogo}>
-            <img src={prepLogo === null ? "/images/icon-logo.png" : ""} />
+            <img
+              src={prepLogo === null ? ICON_LOGO : prepLogo}
+              onError={setImgError}
+            />
           </div>
         </div>
       )}
