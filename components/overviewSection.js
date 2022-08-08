@@ -17,9 +17,8 @@ const {
   getPrepLogoUrl
 } = nodeButlerLib;
 
-const CODE = utils.samples.details;
-const SETPREP = utils.samples.setPrep;
-const DETAILSJSON = utils.samples.details2;
+const { parseBonderFormInputs, parsePrepFormInputs, samples } = utils;
+const { details: CODE, setPrep: SETPREP, details2: DETAILSJSON } = samples;
 
 export default function OverviewSection({ localData }) {
   const [prepLogo, setPrepLogo] = useState(null);
@@ -63,8 +62,7 @@ export default function OverviewSection({ localData }) {
   }
 
   function handleBonderFormSubmit() {
-    console.log("submit bonder form");
-    console.log(bonderForm);
+    parseBonderFormInputs(bonderForm);
   }
 
   function handlePrepFormInputChange(evnt) {
@@ -78,8 +76,7 @@ export default function OverviewSection({ localData }) {
   }
 
   function handlePrepFormSubmit() {
-    console.log("submit prep details form");
-    console.log(prepDetailsForm);
+    parsePrepFormInputs(prepDetailsForm);
   }
 
   useEffect(() => {

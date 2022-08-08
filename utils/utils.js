@@ -104,12 +104,23 @@ function prepareForQueryMethod(url) {
   return urlObject;
 }
 
+function parseBonderFormInputs(rawInputState) {
+  //
+  console.log(rawInputState);
+}
+function parsePrepFormInputs(rawInputState) {
+  //
+  console.log(rawInputState);
+}
+
 const utils = {
   data,
   samples,
   parseBonderWallet,
   parseGetBonderList,
-  prepareForQueryMethod
+  prepareForQueryMethod,
+  parseBonderFormInputs,
+  parsePrepFormInputs
 };
 
 export default utils;
