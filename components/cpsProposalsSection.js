@@ -43,8 +43,6 @@ export default function CPSProposalsSection({ localData }) {
     async function asyncFetch() {
       const cpsData = await getCPSProposalsFromNB();
       handleCPSProposals(cpsData);
-      console.log("cpsData");
-      console.log(cpsData);
     }
 
     // fetch CPS Proposal data from node-butler backend
