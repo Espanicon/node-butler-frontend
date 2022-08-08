@@ -26,9 +26,60 @@ export default function OverviewSection({ localData }) {
   const [overviewState, setOverviewState] = useState(null);
   const [prepDetailsState, setPrepDetailsState] = useState(null);
   const [bondedInfoState, setBondedInfoState] = useState(null);
+  const [bonderForm, setBonderForm] = useState({
+    bonder1: "",
+    bonder2: "",
+    bonder3: "",
+    bonder4: "",
+    bonder5: "",
+    bonder6: "",
+    bonder7: "",
+    bonder8: "",
+    bonder9: "",
+    bonder10: ""
+  });
+  const [prepDetailsForm, setPrepDetailsForm] = useState({
+    name: "",
+    email: "",
+    country: "",
+    city: "",
+    website: "",
+    details: "",
+    nodeAddress: ""
+  });
 
   function setImgError(evnt) {
     evnt.currentTarget.src = ICON_LOGO;
+  }
+
+  function handleFormInputChange(evnt) {
+    const value = evnt.target.value;
+    setBonderForm(bonderState => {
+      let newState = { ...bonderState };
+      newState[evnt.target.name] = value;
+
+      return newState;
+    });
+  }
+
+  function handleBonderFormSubmit() {
+    console.log("submit bonder form");
+    console.log(bonderForm);
+  }
+
+  function handlePrepFormInputChange(evnt) {
+    const value = evnt.target.value;
+    setPrepDetailsForm(prepFormState => {
+      let newState = { ...prepFormState };
+      newState[evnt.target.name] = value;
+
+      return newState;
+    });
+  }
+
+  function handlePrepFormSubmit() {
+    console.log("submit prep details form");
+    console.log(prepDetailsForm);
   }
 
   useEffect(() => {
@@ -149,55 +200,54 @@ export default function OverviewSection({ localData }) {
             <table className={styles.tableSetPrep}>
               <thead>
                 <tr>
-                  <th>Bonder 1:</th>
-                  <th>Bonder 2:</th>
-                  <th>Bonder 3:</th>
-                  <th>Bonder 4:</th>
-                  <th>Bonder 5:</th>
-                  <th>Bonder 6:</th>
-                  <th>Bonder 7:</th>
-                  <th>Bonder 8:</th>
-                  <th>Bonder 9:</th>
-                  <th>Bonder 10:</th>
+                  {[
+                    "Bonder 1:",
+                    "Bonder 2:",
+                    "Bonder 3:",
+                    "Bonder 4:",
+                    "Bonder 5:",
+                    "Bonder 6:",
+                    "Bonder 7:",
+                    "Bonder 8:",
+                    "Bonder 9:",
+                    "Bonder 10:"
+                  ].map((label, index) => {
+                    return <th key={`bonder-header-${index}`}>{label}</th>;
+                  })}
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
+                  {[
+                    ["bonder1", bonderForm.bonder1],
+                    ["bonder2", bonderForm.bonder2],
+                    ["bonder3", bonderForm.bonder3],
+                    ["bonder4", bonderForm.bonder4],
+                    ["bonder5", bonderForm.bonder5],
+                    ["bonder6", bonderForm.bonder6],
+                    ["bonder7", bonderForm.bonder7],
+                    ["bonder8", bonderForm.bonder8],
+                    ["bonder9", bonderForm.bonder9],
+                    ["bonder10", bonderForm.bonder10]
+                  ].map((arrItem, index) => {
+                    return (
+                      <td key={`bonder-item-${index}`}>
+                        <input
+                          type="text"
+                          name={arrItem[0]}
+                          value={arrItem[1]}
+                          onChange={handleFormInputChange}
+                        />
+                      </td>
+                    );
+                  })}
                 </tr>
               </tbody>
               <tfoot></tfoot>
             </table>
-            <button className={styles.button}>Submit</button>
+            <button className={styles.button} onClick={handleBonderFormSubmit}>
+              Submit
+            </button>
           </div>
         </div>
         <Hr />
@@ -254,43 +304,48 @@ export default function OverviewSection({ localData }) {
             <table className={styles.tableSetPrep}>
               <thead>
                 <tr>
-                  <th>Name:</th>
-                  <th>Email:</th>
-                  <th>Country:</th>
-                  <th>City:</th>
-                  <th>Website:</th>
-                  <th>Details:</th>
-                  <th>nodeAddress:</th>
+                  {[
+                    "Name:",
+                    "Email:",
+                    "Country:",
+                    "City:",
+                    "Website:",
+                    "Details:",
+                    "nodeAddress:"
+                  ].map((label, index) => {
+                    return <th key={`prep-header-${index}`}>{label}</th>;
+                  })}
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
-                  <td>
-                    <input type="text" />
-                  </td>
+                  {[
+                    ["name", prepDetailsForm.name],
+                    ["email", prepDetailsForm.email],
+                    ["country", prepDetailsForm.country],
+                    ["city", prepDetailsForm.city],
+                    ["website", prepDetailsForm.website],
+                    ["details", prepDetailsForm.details],
+                    ["nodeAddress", prepDetailsForm.nodeAddress]
+                  ].map((arrItem, index) => {
+                    return (
+                      <td key={`prep-item-${index}`}>
+                        <input
+                          type="text"
+                          name={arrItem[0]}
+                          value={arrItem[1]}
+                          onChange={handlePrepFormInputChange}
+                        />
+                      </td>
+                    );
+                  })}
                 </tr>
               </tbody>
               <tfoot></tfoot>
             </table>
-            <button className={styles.button}>Submit</button>
+            <button className={styles.button} onClick={handlePrepFormSubmit}>
+              Submit
+            </button>
           </div>
         </div>
         <Hr />
