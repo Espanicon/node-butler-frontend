@@ -73,6 +73,9 @@ export default function CPSProposalsSection({ localData }) {
           <li>
             <b>Pending:</b> Proposal currently in voting period.
           </li>
+          <li>
+            <b>Rejected:</b> Proposal was not approved during voting period.
+          </li>
         </ul>
       </div>
       <Hr />
@@ -110,6 +113,11 @@ export default function CPSProposalsSection({ localData }) {
                 statusTitle = "Pending";
                 styledStatus = styles.yellowBorder;
                 imgSrc = "/images/pending-logo.svg";
+                break;
+              case "_rejected":
+                statusTitle = "Rejected";
+                imgSrc = "/images/cancel-logo-2.svg";
+                styledStatus = styles.redBorder;
                 break;
               default:
                 statusTitle = "Unknown";
