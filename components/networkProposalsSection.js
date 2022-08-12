@@ -147,6 +147,23 @@ export default function NetworkProposalsSection({ localData }) {
           })}
         </div>
       )}
+      <GenericModal isOpen={isOpen} onClose={handleModalOnClose}>
+        {networkProposals == false || networkProposals == null ? (
+          <div
+            className={`${styles.proposalInfoContainer} ${styles.proposalInfoContainerIsWaiting}`}
+          >
+            <div className={styles.imgLoading}>
+              {[1, 2, 3, 4, 5].map(foo => (
+                <div className={styles.imgLoadingItem} key={uuidv4()}></div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className={styles.proposalContainer}>
+            <p>TEST CONTENT</p>
+          </div>
+        )}
+      </GenericModal>
     </div>
   );
 }
