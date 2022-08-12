@@ -10,12 +10,20 @@ const { getAllNetworkProposalsFromNB } = nodeButlerLib;
 
 const DATA = {
   statusTypes: {
-    "0x0": "VOTING_STATUS",
-    "0x1": "APPLIED_STATUS",
-    "0x2": "DISAPPROVED_STATUS",
-    "0x3": "CANCELED_STATUS",
-    "0x4": "APPROVED_STATUS",
-    "0x5": "EXPIRED_STATUS"
+    "0x0": "VOTING",
+    "0x1": "APPLIED",
+    "0x2": "DISAPPROVED",
+    "0x3": "CANCELED",
+    "0x4": "APPROVED",
+    "0x5": "EXPIRED"
+  },
+  imgSrc: {
+    "0x0": "/images/pending-logo.svg",
+    "0x1": "/images/check-logo.svg",
+    "0x2": "/images/cancel-logo-2.svg",
+    "0x3": "/images/cancel-logo-2.svg",
+    "0x4": "/images/check-logo.svg",
+    "0x5": "/images/cancel-logo-2.svg"
   },
   styledStatus: {
     "0x0": styles.yellowBorder,
@@ -105,20 +113,34 @@ export default function NetworkProposalsSection({ localData }) {
               DATA.proposalTypes[eachProposal.contents.type] == null
                 ? "UNKNOWN"
                 : DATA.proposalTypes[eachProposal.contents.type];
-            let imgSrc;
             let styledStatus =
               DATA.styledStatus[eachProposal.status] == null
                 ? styles.yellowBorder
                 : DATA.styledStatus[eachProposal.status];
+            let imgSrc =
+              DATA.imgSrc[eachProposal.status] == null
+                ? DATA.imgSrc["0x0"]
+                : DATA.imgSrc[eachProposal.status];
 
             return (
               <div
                 className={`${styles.cardContainer} ${styledStatus}`}
                 key={uuidv4()}
-                onClick={() => handleOnModal(index)}
+                onClick={() => handleModalOnOpen(index)}
               >
                 <div className={styles.cardTitle}>
                   <p>{eachProposal.contents.title}</p>
+                </div>
+                <div className={styles.cardStatusContainer}>
+                  <p className={styles.cardStatusInfo}>
+                    <b>Status: </b>
+                    {statusTitle}
+                  </p>
+                  <img
+                    src={imgSrc}
+                    className={styles.cardStatusImage}
+                    alt="proposal status"
+                  />
                 </div>
               </div>
             );
