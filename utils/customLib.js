@@ -16,6 +16,17 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
     this.getPrepFromNB = this.getPrepFromNB.bind(this);
     this.parsePrepFromNB = this.parsePrepFromNB.bind(this);
     this.getPrepLogoUrl = this.getPrepLogoUrl.bind(this);
+    this.getAllNetworkProposalsFromNB = this.getAllNetworkProposalsFromNB.bind(
+      this
+    );
+  }
+  async getAllNetworkProposalsFromNB() {
+    const request = await this.queryMethod(
+      "/node-butler/network-proposals",
+      false,
+      this.scores.apiHostnames.espanicon
+    );
+    return request;
   }
   async getCPSProposalFullInfoByHash(hash) {
     const url = {

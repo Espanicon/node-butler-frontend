@@ -8,3 +8,86 @@
 .main > h2 {
   margin: 5px;
 }
+.section {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+.section > * {
+  flex: 1;
+  min-width: 90%;
+  max-width: 90%;
+}
+.greenBorder {
+  border: 2px solid #39ff14 !important;
+}
+.redBorder {
+  border: 2px solid #f72119 !important;
+}
+.yellowBorder {
+  border: 2px solid #fff01f !important;
+}
+.cardContainer {
+  max-width: 300px;
+  border: 2px solid #f4f4f4;
+  border-radius: 4px;
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 10px;
+  margin: 10px;
+  background: repeating-linear-gradient(
+    135deg,
+    #fafafa,
+    #fafafa 100px,
+    #f6f6f6 100px,
+    #f6f6f6 200px
+  );
+  cursor: pointer;
+}
+.cardContainer > * {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 2px solid #f0f0f0;
+  border-radius: 4px;
+  padding: 5px;
+  margin: 2px;
+  border-radius: 2px;
+}
+
+.cardContainer p {
+  margin: 0px;
+}
+.cardTitle {
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: left;
+}
+.cardStatusContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+}
+.cardStatusInfo {
+  font-size: 1rem;
+}
+.cardStatusImage {
+  margin-left: auto;
+}
+.cardInfo {
+  font-size: 0.8rem;
+}
+.cardInfoItem {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.cardInfoItem > p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cardTinyImage {
+  height: 15px;
+  margin-right: 10px;
+}
