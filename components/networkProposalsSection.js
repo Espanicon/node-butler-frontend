@@ -60,8 +60,9 @@ export default function NetworkProposalsSection({ localData }) {
   }
 
   function handleModalOnOpen(index) {
-    setIsOpen(true);
     setProposalIndex(index);
+    console.log(networkProposals);
+    setIsOpen(true);
   }
 
   function handleNetworkProposals(proposalData) {
@@ -74,7 +75,6 @@ export default function NetworkProposalsSection({ localData }) {
       //
       const allNetworkProposals = await getAllNetworkProposalsFromNB();
       handleNetworkProposals(allNetworkProposals);
-      // console.log(allNetworkProposals);
     }
 
     // run intiial data fetch
@@ -148,7 +148,9 @@ export default function NetworkProposalsSection({ localData }) {
         </div>
       )}
       <GenericModal isOpen={isOpen} onClose={handleModalOnClose}>
-        {networkProposals == false || networkProposals == null ? (
+        {networkProposals == false ||
+        networkProposals == null ||
+        proposalIndex === false ? (
           <div
             className={`${styles.proposalInfoContainer} ${styles.proposalInfoContainerIsWaiting}`}
           >
@@ -160,7 +162,42 @@ export default function NetworkProposalsSection({ localData }) {
           </div>
         ) : (
           <div className={styles.proposalContainer}>
-            <p>TEST CONTENT</p>
+            <div className={styles.proposalContainerHeader}>
+              <h2>{networkProposals[proposalIndex].contents.title}</h2>
+              <ul>
+                <li>
+                  Proposer: {networkProposals[proposalIndex].proposerName}
+                </li>
+                <li>
+                  Start (block height):{" "}
+                  {parseInt(networkProposals[proposalIndex].startBlockHeight)}
+                </li>
+                <li>
+                  End (block height):{" "}
+                  {parseInt(networkProposals[proposalIndex].endBlockHeight)}
+                </li>
+                <li>Proposal id: {networkProposals[proposalIndex].id}</li>
+                <li>
+                  Status:{" "}
+                  {DATA.statusTypes[networkProposals[proposalIndex].status]}
+                </li>
+                <li>
+                  Type:{" "}
+                  {
+                    DATA.proposalTypes[
+                      networkProposals[proposalIndex].contents.type
+                    ]
+                  }
+                </li>
+              </ul>
+            </div>
+            <Hr />
+            <div
+              className={styles.proposalContainerBody}
+              dangerouslySetInnerHTML={{
+                __html: networkProposals[proposalIndex].contents.description
+              }}
+            ></div>
           </div>
         )}
       </GenericModal>
