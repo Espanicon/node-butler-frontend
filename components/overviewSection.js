@@ -345,7 +345,6 @@ export default function OverviewSection({ localData }) {
             </button>
           </div>
         </div>
-        <Hr />
       </div>
     </div>
   );

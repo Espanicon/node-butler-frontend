@@ -42,6 +42,8 @@
   /* justify-content: center; */
   /* font-size: calc(10px + 2vmin); */
   color: black;
+  /* max-height: 100vh; */
+  /* overflow-y: scroll; */
 }
 /* .main > div { */
 /*   word-wrap: break-word; */
@@ -51,11 +53,10 @@
   font-size: calc(10px + 1.2vmin);
   max-width: 600px;
   min-width: 190px;
-  max-height: 100vh;
+  /* max-height: 100vh; */
   border-right: 2px solid #ed0044;
   text-align: right;
   padding-right: 5px;
-  cursor: pointer;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -63,6 +64,9 @@
   border-bottom: 2px solid #ed0044;
   margin: 0px;
   padding: 4px;
+}
+.sidebarSection {
+  cursor: pointer;
 }
 .sidebar > div:hover {
   background-color: rgba(251, 188, 89, 0.4);
@@ -75,6 +79,7 @@
   width: 70%;
   padding: 0px 20px 0px 0px;
   max-width: 1200px;
+  /* max-height: 100vh; */
 }
 
 .loginButton {
