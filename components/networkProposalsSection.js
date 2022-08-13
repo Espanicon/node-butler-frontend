@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import GenericModal from "./genericModal";
 
 const nodeButlerLib = new NodeButlerSDK();
-const { getAllNetworkProposalsFromNB } = nodeButlerLib;
+const { getAllNetworkProposals } = nodeButlerLib;
 
 const DATA = {
   statusTypes: {
@@ -49,6 +49,7 @@ const DATA = {
 
 export default function NetworkProposalsSection({ localData }) {
   const [networkProposals, setNetworkProposals] = useState(null);
+  const [activeNetworkProposals, setActiveNetworkProposals] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [proposalInfo, setProposalInfo] = useState(false);
   const [proposalIndex, setProposalIndex] = useState(false);
@@ -70,11 +71,26 @@ export default function NetworkProposalsSection({ localData }) {
     setNetworkProposals(proposalData);
   }
 
+  function searchForActiveNetworkProposals(allProposalsData) {
+    let activeProposals = [];
+
+    for (let eachProposal of allProposalsData) {
+      if (eachProposal.status === "0x0") {
+        activeProposals.push(eachProposal);
+      }
+    }
+
+    setActiveNetworkProposals(activeProposals);
+  }
+
   useEffect(() => {
     async function fetchInitialData() {
       //
-      const allNetworkProposals = await getAllNetworkProposalsFromNB();
+      // const allNetworkProposals = await getAllNetworkProposalsFromNB();
+      const allNetworkProposals = await getAllNetworkProposals();
       handleNetworkProposals(allNetworkProposals);
+
+      searchForActiveNetworkProposals(allNetworkProposals);
     }
 
     // run intiial data fetch
@@ -83,21 +99,13 @@ export default function NetworkProposalsSection({ localData }) {
   return (
     <div className={styles.main}>
       <h2>Active network proposals</h2>
-      <p>
-        Network Proposals paragraph Sed ut perspiciatis unde omnis iste natus
-        error sit voluptatem accusantium doloremque laudantium, totam rem
-        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
-        beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-        voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni
-        dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam
-        est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-        sed quia non numquam eius modi tempora incidunt ut labore et dolore
-        magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis
-        nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut
-        aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit
-        qui in ea voluptate velit esse quam nihil molestiae consequatur, vel
-        illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
-      </p>
+      {activeNetworkProposals == null ? (
+        <LoadingComponent />
+      ) : activeNetworkProposals.length < 1 ? (
+        <p>** CURRENTLY NO ACTIVE PROPOSALS TO VOTE **</p>
+      ) : (
+        <p>** ACTIVE PROPOSALS TO VOTE **</p>
+      )}
       <Hr />
       <h2>All network proposals</h2>
       {networkProposals == null ? (
