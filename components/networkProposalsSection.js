@@ -93,7 +93,7 @@ export default function NetworkProposalsSection({ localData }) {
       searchForActiveNetworkProposals(allNetworkProposals);
     }
 
-    // run intiial data fetch
+    // run initial data fetch
     fetchInitialData();
   }, []);
   return (

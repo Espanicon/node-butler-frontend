@@ -113,6 +113,30 @@ function parsePrepFormInputs(rawInputState) {
   console.log(rawInputState);
 }
 
+function isValidScore(scoreAddress) {
+  // check is the input is a valid SCORE address
+  const regex = /([cC][xX][a-fA-F0-9]{40})$/;
+  return regex.test(scoreAddress);
+}
+
+function parseScore(scoreApi) {
+  let parsedScore = "";
+
+  if (scoreApi == null) return "** INVALID SCORE **";
+
+  for (let each of scoreApi) {
+    parsedScore += "{\n";
+    parsedScore += `\u00A0\u00A0name: '${
+      each.name
+    }'\n\u00A0\u00A0inputs: ${JSON.stringify(
+      each.inputs
+    )}\n\u00A0\u00A0outputs: ${JSON.stringify(
+      each.outputs
+    )}\n\u00A0\u00A0type: ${each.type}\n}\n`;
+  }
+  return parsedScore;
+}
+
 const utils = {
   data,
   samples,
@@ -120,7 +144,9 @@ const utils = {
   parseGetBonderList,
   prepareForQueryMethod,
   parseBonderFormInputs,
-  parsePrepFormInputs
+  parsePrepFormInputs,
+  isValidScore,
+  parseScore
 };
 
 export default utils;

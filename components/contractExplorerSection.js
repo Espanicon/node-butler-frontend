@@ -1,37 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "../styles/contractExplorerSection.module.css";
-import { Hr } from "./customComponents";
+import { Hr, loadingComponent } from "./customComponents";
+import NodeButlerSDK from "../utils/customLib";
+import utils from "../utils/utils";
 
-const MOCK_DATA = {
-  textarea: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur
-        adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-        in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-        qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit
-        amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est
-        laborum.`
-};
+const nodeButlerLib = new NodeButlerSDK();
+const { getScoreApi } = nodeButlerLib;
+
 export default function ContractExplorerSection({ localData }) {
   const [scoreInput, setScoreInput] = useState("");
-  const [scoreData, setScoreData] = useState(MOCK_DATA.textarea);
+  const [scoreData, setScoreData] = useState("** SCORE DATA **");
+  const [scoreIsValid, setScoreIsValid] = useState(false);
 
   function handleScoreInputChange(evnt) {
     const value = evnt.target.value;
+
+    if (utils.isValidScore(value)) {
+      setScoreIsValid(true);
+      if (scoreInput === value) {
+        // if the new score is the same as the previous score do nothing
+      } else {
+        fetchScoreApi(value);
+      }
+    } else {
+      setScoreIsValid(false);
+    }
     setScoreInput(value);
   }
+
+  async function fetchScoreApi(scoreAddress) {
+    const scoreApi = await getScoreApi(scoreAddress);
+    const parsedScore = utils.parseScore(scoreApi);
+    setScoreData(parsedScore);
+  }
+
+  useEffect(() => {
+    async function fetchInitialData() {
+      //
+    }
+
+    // run initial data fetch
+    fetchInitialData();
+  }, []);
   return (
     <div className={styles.main}>
       <h2>Contract Explorer</h2>
@@ -44,12 +54,21 @@ export default function ContractExplorerSection({ localData }) {
             name="scoreInput"
             value={scoreInput}
             onChange={handleScoreInputChange}
+            className={
+              scoreIsValid
+                ? styles.input
+                : `${styles.input} ${styles.inputInvalid}`
+            }
           />
         </li>
       </ul>
 
       <p>SCORE details:</p>
-      <textarea className={styles.textarea}>{scoreData}</textarea>
+      <textarea
+        className={styles.textarea}
+        value={scoreData}
+        readOnly
+      ></textarea>
     </div>
   );
 }
