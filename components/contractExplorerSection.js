@@ -13,11 +13,35 @@ export default function ContractExplorerSection({ localData }) {
   const [scoreData, setScoreData] = useState(null);
   const [scoreIsValid, setScoreIsValid] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("");
+  const [selectedMethodObj, setSelectedMethodObj] = useState(null);
+  const [paramsInput, setParamsInput] = useState({});
 
   function handleScoreMethodSelected(evnt) {
     const selected = evnt.target.value;
+    const selectedObj = scoreData.filter(method => method.name === selected)[0];
     setSelectedMethod(selected);
+    setSelectedMethodObj(selectedObj);
+
+    let paramsObj = {};
+    if (selectedObj.inputs.length > 0) {
+      selectedObj.inputs.map(param => {
+        paramsObj[param.name] = "";
+      });
+      setParamsInput(paramsObj);
+    }
   }
+
+  function handleParamsInputChange(evnt) {
+    //
+    let value = evnt.target;
+    console.log(value);
+    setParamsInput(prevState => {
+      let newParams = { ...prevState };
+      newParams[evnt.target.name] = evnt.target.value;
+      return newParams;
+    });
+  }
+
   function handleScoreInputChange(evnt) {
     const value = evnt.target.value;
 
@@ -33,6 +57,8 @@ export default function ContractExplorerSection({ localData }) {
       fetchScoreApi(value);
     }
     setScoreInput(value);
+    setSelectedMethod("");
+    setSelectedMethodObj(null);
   }
 
   async function fetchScoreApi(scoreAddress) {
@@ -88,10 +114,11 @@ export default function ContractExplorerSection({ localData }) {
               value={selectedMethod}
               onChange={handleScoreMethodSelected}
             >
+              <option value="" selected disabled hidden>
+                Choose method
+              </option>
               {scoreData == null ? (
-                <option value="null" disabled>
-                  METHODS
-                </option>
+                <></>
               ) : (
                 scoreData.map(eachMethod => {
                   if (eachMethod.type === "function") {
@@ -108,7 +135,31 @@ export default function ContractExplorerSection({ localData }) {
         </ul>
       </div>
       <p>Params for selected SCORE method:</p>
-      {}
+      {selectedMethodObj == null ? (
+        <ul>
+          <li>** NO METHOD SELECTED **</li>
+        </ul>
+      ) : (
+        <ul>
+          {selectedMethodObj.inputs.length > 0 ? (
+            selectedMethodObj.inputs.map((param, index) => {
+              return (
+                <li key={`${param.name}-${index}`}>
+                  {param.name}:{" "}
+                  <input
+                    type="text"
+                    name={param.name}
+                    value={paramsInput[param.name]}
+                    onChange={handleParamsInputChange}
+                  />
+                </li>
+              );
+            })
+          ) : (
+            <li>** NO PARAMS ** </li>
+          )}
+        </ul>
+      )}
     </div>
   );
 }
