@@ -12,7 +12,12 @@ export default function ContractExplorerSection({ localData }) {
   const [scoreInput, setScoreInput] = useState("");
   const [scoreData, setScoreData] = useState(null);
   const [scoreIsValid, setScoreIsValid] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState("");
 
+  function handleScoreMethodSelected(evnt) {
+    const selected = evnt.target.value;
+    setSelectedMethod(selected);
+  }
   function handleScoreInputChange(evnt) {
     const value = evnt.target.value;
 
@@ -74,23 +79,36 @@ export default function ContractExplorerSection({ localData }) {
       <h2>Sign contract method with logged wallet</h2>
       <p>Select method from the below dropdown list:</p>
       <div className={styles.scoreMethodSelection}>
-        <label htmlFor="scoreMethods">Select a method: </label>
-        <select name="scoreMethods" id="scoresMethods">
-          {scoreData == null ? (
-            <option value="null" disabled>
-              METHODS
-            </option>
-          ) : (
-            scoreData.map(eachMethod => {
-              return (
-                <option key={uuidv4()} value={eachMethod.name}>
-                  {eachMethod.name}
+        <ul>
+          <li>
+            <label htmlFor="scoreMethods">Select a method: </label>
+            <select
+              name="scoreMethods"
+              id="scoreMethods"
+              value={selectedMethod}
+              onChange={handleScoreMethodSelected}
+            >
+              {scoreData == null ? (
+                <option value="null" disabled>
+                  METHODS
                 </option>
-              );
-            })
-          )}
-        </select>
+              ) : (
+                scoreData.map(eachMethod => {
+                  if (eachMethod.type === "function") {
+                    return (
+                      <option key={uuidv4()} value={eachMethod.name}>
+                        {eachMethod.name}
+                      </option>
+                    );
+                  }
+                })
+              )}
+            </select>
+          </li>
+        </ul>
       </div>
+      <p>Params for selected SCORE method:</p>
+      {}
     </div>
   );
 }
