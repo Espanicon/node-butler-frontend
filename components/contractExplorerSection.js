@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "../styles/contractExplorerSection.module.css";
 import { Hr, loadingComponent } from "./customComponents";
 import NodeButlerSDK from "../utils/customLib";
+import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
 
 const nodeButlerLib = new NodeButlerSDK();
@@ -9,7 +10,7 @@ const { getScoreApi } = nodeButlerLib;
 
 export default function ContractExplorerSection({ localData }) {
   const [scoreInput, setScoreInput] = useState("");
-  const [scoreData, setScoreData] = useState("** SCORE DATA **");
+  const [scoreData, setScoreData] = useState(null);
   const [scoreIsValid, setScoreIsValid] = useState(false);
 
   function handleScoreInputChange(evnt) {
@@ -24,14 +25,14 @@ export default function ContractExplorerSection({ localData }) {
       }
     } else {
       setScoreIsValid(false);
+      fetchScoreApi(value);
     }
     setScoreInput(value);
   }
 
   async function fetchScoreApi(scoreAddress) {
     const scoreApi = await getScoreApi(scoreAddress);
-    const parsedScore = utils.parseScore(scoreApi);
-    setScoreData(parsedScore);
+    setScoreData(scoreApi);
   }
 
   useEffect(() => {
@@ -66,9 +67,30 @@ export default function ContractExplorerSection({ localData }) {
       <p>SCORE details:</p>
       <textarea
         className={styles.textarea}
-        value={scoreData}
+        value={scoreIsValid ? utils.parseScore(scoreData) : "** SCORE DATA **"}
         readOnly
       ></textarea>
+      <Hr />
+      <h2>Sign contract method with logged wallet</h2>
+      <p>Select method from the below dropdown list:</p>
+      <div className={styles.scoreMethodSelection}>
+        <label htmlFor="scoreMethods">Select a method: </label>
+        <select name="scoreMethods" id="scoresMethods">
+          {scoreData == null ? (
+            <option value="null" disabled>
+              METHODS
+            </option>
+          ) : (
+            scoreData.map(eachMethod => {
+              return (
+                <option key={uuidv4()} value={eachMethod.name}>
+                  {eachMethod.name}
+                </option>
+              );
+            })
+          )}
+        </select>
+      </div>
     </div>
   );
 }

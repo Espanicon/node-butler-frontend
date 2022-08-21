@@ -14,8 +14,9 @@
   min-height: 250px;
   max-height: 500px;
   display: block;
-  /* height: 100%; */
-  /* overflow: hidden; */
+  overflow-x: auto;
+  white-space: pre;
+  margin-bottom: 10px;
 }
 .input {
   border: 2px solid green;

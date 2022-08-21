@@ -126,13 +126,14 @@ function parseScore(scoreApi) {
 
   for (let each of scoreApi) {
     parsedScore += "{\n";
-    parsedScore += `\u00A0\u00A0name: '${
-      each.name
-    }'\n\u00A0\u00A0inputs: ${JSON.stringify(
-      each.inputs
-    )}\n\u00A0\u00A0outputs: ${JSON.stringify(
-      each.outputs
-    )}\n\u00A0\u00A0type: ${each.type}\n}\n`;
+    for (let key in each) {
+      if (typeof each[key] === "string") {
+        parsedScore += `\u00A0\u00A0 ${key}: "${each[key]}",\n`;
+      } else {
+        parsedScore += `\u00A0\u00A0 ${key}: ${JSON.stringify(each[key])},\n`;
+      }
+    }
+    parsedScore += "},\n";
   }
   return parsedScore;
 }
