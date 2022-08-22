@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/contractExplorerSection.module.css";
 import { Hr, loadingComponent } from "./customComponents";
+import GenericModal from "./genericModal";
 import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
@@ -15,6 +16,22 @@ export default function ContractExplorerSection({ localData }) {
   const [selectedMethod, setSelectedMethod] = useState("");
   const [selectedMethodObj, setSelectedMethodObj] = useState(null);
   const [paramsInput, setParamsInput] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [txParamsIsValid, setTxparamsIsValid] = useState(false);
+
+  function handleModalOnClose() {
+    //
+    setIsOpen(false);
+  }
+
+  function handleModalOnOpen() {
+    //
+    setIsOpen(true);
+  }
+
+  function handleSignTx() {
+    handleModalOnOpen();
+  }
 
   function handleScoreMethodSelected(evnt) {
     const selected = evnt.target.value;
@@ -151,6 +168,7 @@ export default function ContractExplorerSection({ localData }) {
                     name={param.name}
                     value={paramsInput[param.name]}
                     onChange={handleParamsInputChange}
+                    placeholder={param.type}
                   />
                 </li>
               );
@@ -160,6 +178,34 @@ export default function ContractExplorerSection({ localData }) {
           )}
         </ul>
       )}
+      <Hr />
+      <h3>RPC JSON Object</h3>
+      <p>
+        A transaction will be signed with your installed wallet (ICONex or Hana)
+        with the following RPC JSON Object, verify that the values are correct
+        and click the button to sign the transaction.
+      </p>
+      <p>RPC JSON:</p>
+      <textarea
+        className={styles.textarea}
+        value={
+          txParamsIsValid
+            ? "** RPC JSON IS VALID **"
+            : "** RPC JSON NOT VALID **"
+        }
+        readOnly
+      ></textarea>
+      <button className={styles.button} onClick={handleSignTx}>
+        Sign Tx
+      </button>
     </div>
+  );
+}
+
+function CustomModal({ isOpen, onClose }) {
+  return (
+    <GenericModal isOpen={isOpen} onClose={onClose} useSmall={true}>
+      <div className={styles.modalMain}></div>
+    </GenericModal>
   );
 }

@@ -1,6 +1,11 @@
 import styles from "../styles/genericModal.module.css";
 
-export default function GenericModal({ isOpen, onClose, children }) {
+export default function GenericModal({
+  isOpen,
+  onClose,
+  useSmall = false,
+  children
+}) {
   function handleOnClose() {
     onClose();
   }
@@ -15,7 +20,14 @@ export default function GenericModal({ isOpen, onClose, children }) {
       }`}
       onClick={handleOnClose}
     >
-      <div className={styles.main} onClick={onMainClick}>
+      <div
+        className={
+          useSmall
+            ? `${styles.main} ${styles.mainSmall}`
+            : `${styles.main} ${styles.mainBig}`
+        }
+        onClick={onMainClick}
+      >
         {children}
       </div>
     </div>

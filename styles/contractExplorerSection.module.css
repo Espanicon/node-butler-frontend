@@ -25,3 +25,8 @@
 .inputInvalid {
   border: 2px solid red;
 }
+.button {
+  margin: 4px;
+  height: 30px;
+  width: 80px;
+}
