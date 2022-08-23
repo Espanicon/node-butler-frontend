@@ -27,6 +27,10 @@ export default function ContractExplorerSection({ localData }) {
   const [txParamsData, setTxParamsData] = useState(null);
 
   function handleSignTx() {
+    if (localData.auth.successfulLogin) {
+    } else {
+      alert("Please login first to be able t sign tx with your wallet");
+    }
     console.log(localData);
   }
 
