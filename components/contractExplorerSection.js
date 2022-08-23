@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/contractExplorerSection.module.css";
 import { Hr, loadingComponent } from "./customComponents";
-import GenericModal from "./genericModal";
 import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
 
 const nodeButlerLib = new NodeButlerSDK();
-const { getScoreApi } = nodeButlerLib;
+const {
+  getScoreApi,
+  makeTxCallRPCObj,
+  makeICXCallRequestObj,
+  scores,
+  makeICXSendTxRequestObj
+} = nodeButlerLib;
+
+const USE_NID = scores.nid.mainnet;
 
 export default function ContractExplorerSection({ localData }) {
   const [scoreInput, setScoreInput] = useState("");
@@ -16,24 +23,15 @@ export default function ContractExplorerSection({ localData }) {
   const [selectedMethod, setSelectedMethod] = useState("");
   const [selectedMethodObj, setSelectedMethodObj] = useState(null);
   const [paramsInput, setParamsInput] = useState({});
-  const [isOpen, setIsOpen] = useState(false);
-  const [txParamsIsValid, setTxparamsIsValid] = useState(false);
-
-  function handleModalOnClose() {
-    //
-    setIsOpen(false);
-  }
-
-  function handleModalOnOpen() {
-    //
-    setIsOpen(true);
-  }
+  const [txParamsIsValid, setTxParamsIsValid] = useState(false);
+  const [txParamsData, setTxParamsData] = useState(null);
 
   function handleSignTx() {
-    handleModalOnOpen();
+    console.log(localData);
   }
 
   function handleScoreMethodSelected(evnt) {
+    // setTxParamsIsValid(false);
     const selected = evnt.target.value;
     const selectedObj = scoreData.filter(method => method.name === selected)[0];
     setSelectedMethod(selected);
@@ -44,14 +42,42 @@ export default function ContractExplorerSection({ localData }) {
       selectedObj.inputs.map(param => {
         paramsObj[param.name] = "";
       });
-      setParamsInput(paramsObj);
     }
+
+    // set method params
+    setParamsInput(paramsObj);
+    setTxParamsIsValid(true);
+
+    // pass the method object to build the JSON RPC
+    // handleRPCJSONObjChange(selectedObj, paramsObj);
+  }
+
+  function handleRPCJSONObjChange(scoreMethodObj, paramsObj) {
+    //
+    let txObj = null;
+    if (scoreMethodObj.inputs.length > 0) {
+      // if the method is not readonly (it has method params)
+      txObj = makeICXSendTxRequestObj(
+        scoreMethodObj.name,
+        paramsObj,
+        null,
+        scoreInput
+      );
+    } else {
+      // if this is a readonly method
+      txObj = makeICXCallRequestObj(
+        scoreMethodObj.name,
+        null,
+        null,
+        scoreInput
+      );
+    }
+    setTxParamsData(txObj);
   }
 
   function handleParamsInputChange(evnt) {
     //
     let value = evnt.target;
-    console.log(value);
     setParamsInput(prevState => {
       let newParams = { ...prevState };
       newParams[evnt.target.name] = evnt.target.value;
@@ -82,6 +108,16 @@ export default function ContractExplorerSection({ localData }) {
     const scoreApi = await getScoreApi(scoreAddress);
     setScoreData(scoreApi);
   }
+
+  useEffect(() => {
+    //
+    if (selectedMethodObj == null) {
+      // if tx params are null do nothing
+    } else {
+      handleRPCJSONObjChange(selectedMethodObj, paramsInput);
+    }
+    setTxParamsIsValid(true);
+  }, [selectedMethodObj, paramsInput]);
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -131,7 +167,7 @@ export default function ContractExplorerSection({ localData }) {
               value={selectedMethod}
               onChange={handleScoreMethodSelected}
             >
-              <option value="" selected disabled hidden>
+              <option value="" disabled>
                 Choose method
               </option>
               {scoreData == null ? (
@@ -187,25 +223,13 @@ export default function ContractExplorerSection({ localData }) {
       </p>
       <p>RPC JSON:</p>
       <textarea
-        className={styles.textarea}
-        value={
-          txParamsIsValid
-            ? "** RPC JSON IS VALID **"
-            : "** RPC JSON NOT VALID **"
-        }
+        className={`${styles.textarea} ${styles.textareaRPCJSON}`}
+        value={txParamsIsValid ? `${txParamsData}` : "** RPC JSON NOT VALID **"}
         readOnly
       ></textarea>
       <button className={styles.button} onClick={handleSignTx}>
         Sign Tx
       </button>
     </div>
-  );
-}
-
-function CustomModal({ isOpen, onClose }) {
-  return (
-    <GenericModal isOpen={isOpen} onClose={onClose} useSmall={true}>
-      <div className={styles.modalMain}></div>
-    </GenericModal>
   );
 }

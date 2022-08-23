@@ -18,6 +18,9 @@
   white-space: pre;
   margin-bottom: 10px;
 }
+.textareaRPCJSON {
+  white-space: pre-wrap;
+}
 .input {
   border: 2px solid green;
   border-radius: 4px;
