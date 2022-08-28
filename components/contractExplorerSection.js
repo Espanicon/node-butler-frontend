@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import styles from "../styles/contractExplorerSection.module.css";
 import { Hr, loadingComponent } from "./customComponents";
+import GenericModal from "./genericModal";
 import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
 import utils from "../utils/utils";
@@ -25,13 +26,35 @@ export default function ContractExplorerSection({ localData }) {
   const [paramsInput, setParamsInput] = useState({});
   const [txParamsIsValid, setTxParamsIsValid] = useState(false);
   const [txParamsData, setTxParamsData] = useState(null);
+  const [walletResponseIsOpen, setWalletResponseIsOpen] = useState(false);
+
+  function handleWalletResponseOnClose() {
+    setWalletResponseIsOpen(false);
+  }
+
+  function dispatchTxEvent(txData) {
+    window.dispatchEvent(
+      new CustomEvent("ICONEX_RELAY_REQUEST", {
+        detail: {
+          type: "REQUEST_JSON-RPC",
+          payload: txData
+        }
+      })
+    );
+    // open modal window to show result of wallet tx request
+    // setWalletTxModalIsOpen(true)
+  }
 
   function handleSignTx() {
     if (localData.auth.successfulLogin) {
+      // if user is logged
+      const txData = txParamsData;
+      // dispatchEvet(txData);
+      setWalletResponseIsOpen(true);
     } else {
       alert("Please login first to be able t sign tx with your wallet");
     }
-    console.log(localData);
+    // console.log(localData);
   }
 
   function handleScoreMethodSelected(evnt) {
@@ -124,12 +147,23 @@ export default function ContractExplorerSection({ localData }) {
   }, [selectedMethodObj, paramsInput]);
 
   useEffect(() => {
-    async function fetchInitialData() {
-      //
-    }
-
-    // run initial data fetch
-    fetchInitialData();
+    // TODO: set the logic to handle the wallet events here
+    //function runWalletEventListener(evnt) {
+    //  utils.customWallletEventListener(
+    //    evnt
+    //    //
+    //  );
+    //}
+    //// create event listener for Hana and ICONex wallets
+    //window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+    //// return the following function to perform cleanup of the event
+    //// listener on component unmount
+    //return function removeCustomEventListener() {
+    //  window.removeEventListener(
+    //    "ICONEX_RELAY_RESPONSE",
+    //    runWalletEventListener
+    //  );
+    //};
   }, []);
   return (
     <div className={styles.main}>
@@ -234,6 +268,20 @@ export default function ContractExplorerSection({ localData }) {
       <button className={styles.button} onClick={handleSignTx}>
         Sign Tx
       </button>
+      <WalletResponseModal
+        isOpen={walletResponseIsOpen}
+        onClose={handleWalletResponseOnClose}
+      />
     </div>
+  );
+}
+
+function WalletResponseModal({ isOpen, onClose }) {
+  return (
+    <GenericModal isOpen={isOpen} onClose={onClose} useSmall={true}>
+      <div>
+        <h2>test on modal</h2>
+      </div>
+    </GenericModal>
   );
 }
