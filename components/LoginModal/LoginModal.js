@@ -224,6 +224,9 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
           localLoginData.selectedWallet = payload;
           localLoginData.methodUsed = LOGIN_METHODS.iconex;
           localLoginData.successfulLogin = true;
+
+          // send data to parent component
+          handleLoginData(localLoginData);
           break;
 
         case "CANCEL":
@@ -231,13 +234,10 @@ function LoginModal({ onRequestClose, onRetrieveData, isOpen, ...props }) {
           break;
 
         default:
-          console.error("Error on ICONEX_RELAY_RESPONSE");
-          console.error("type: " + type);
-          console.error("payload: ", payload);
+        // console.error("Error on ICONEX_RELAY_RESPONSE");
+        // console.error("type: " + type);
+        // console.error("payload: ", payload);
       }
-
-      // send data to parent component
-      handleLoginData(localLoginData);
 
       // close LoginModal
       closeModal();

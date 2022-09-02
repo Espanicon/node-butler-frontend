@@ -12,10 +12,11 @@ const {
   makeTxCallRPCObj,
   makeICXCallRequestObj,
   scores,
-  makeICXSendTxRequestObj
+  makeICXSendTxRequestObj,
+  preFormatRPCJSON
 } = nodeButlerLib;
 
-const USE_NID = scores.nid.mainnet;
+// const USE_NID = scores.nid.mainnet;
 
 export default function ContractExplorerSection({ localData }) {
   const [scoreInput, setScoreInput] = useState("");
@@ -26,6 +27,8 @@ export default function ContractExplorerSection({ localData }) {
   const [paramsInput, setParamsInput] = useState({});
   const [txParamsIsValid, setTxParamsIsValid] = useState(false);
   const [txParamsData, setTxParamsData] = useState(null);
+  const [txResultHash, setTxResultHash] = useState(null);
+  const [txResults, setTxResults] = useState(null);
   const [walletResponseIsOpen, setWalletResponseIsOpen] = useState(false);
 
   function handleWalletResponseOnClose() {
@@ -33,6 +36,8 @@ export default function ContractExplorerSection({ localData }) {
   }
 
   function dispatchTxEvent(txData) {
+    console.log("txData");
+    console.log(txData);
     window.dispatchEvent(
       new CustomEvent("ICONEX_RELAY_REQUEST", {
         detail: {
@@ -49,8 +54,12 @@ export default function ContractExplorerSection({ localData }) {
     if (localData.auth.successfulLogin) {
       // if user is logged
       const txData = txParamsData;
-      // dispatchEvet(txData);
-      setWalletResponseIsOpen(true);
+      const formattedRPCJSON = preFormatRPCJSON(
+        txData,
+        localData.auth.selectedWallet
+      );
+      dispatchTxEvent(formattedRPCJSON);
+      // setWalletResponseIsOpen(true);
     } else {
       alert("Please login first to be able t sign tx with your wallet");
     }
@@ -58,7 +67,6 @@ export default function ContractExplorerSection({ localData }) {
   }
 
   function handleScoreMethodSelected(evnt) {
-    // setTxParamsIsValid(false);
     const selected = evnt.target.value;
     const selectedObj = scoreData.filter(method => method.name === selected)[0];
     setSelectedMethod(selected);
@@ -88,7 +96,8 @@ export default function ContractExplorerSection({ localData }) {
         scoreMethodObj.name,
         paramsObj,
         null,
-        scoreInput
+        scoreInput,
+        false
       );
     } else {
       // if this is a readonly method
@@ -96,10 +105,18 @@ export default function ContractExplorerSection({ localData }) {
         scoreMethodObj.name,
         null,
         null,
-        scoreInput
+        scoreInput,
+        false
       );
     }
+    const formattedRPCJSON = preFormatRPCJSON(
+      txObj,
+      localData.auth.selectedWallet
+    );
+    console.log("txObj");
+    console.log(formattedRPCJSON);
     setTxParamsData(txObj);
+    // setTxParamsIsValid(true);
   }
 
   function handleParamsInputChange(evnt) {
@@ -112,18 +129,26 @@ export default function ContractExplorerSection({ localData }) {
     });
   }
 
+  function handleScoreValidation(boolValidation) {
+    setScoreIsValid(boolValidation);
+    setTxParamsIsValid(false);
+    setTxParamsData(null);
+
+    if (!boolValidation) {
+    }
+  }
   function handleScoreInputChange(evnt) {
     const value = evnt.target.value;
 
     if (utils.isValidScore(value)) {
-      setScoreIsValid(true);
+      handleScoreValidation(true);
       if (scoreInput === value) {
         // if the new score is the same as the previous score do nothing
       } else {
         fetchScoreApi(value);
       }
     } else {
-      setScoreIsValid(false);
+      handleScoreValidation(false);
       fetchScoreApi(value);
     }
     setScoreInput(value);
@@ -136,6 +161,11 @@ export default function ContractExplorerSection({ localData }) {
     setScoreData(scoreApi);
   }
 
+  function handleTxResult(txResult) {
+    //
+    console.log(txResult);
+  }
+
   useEffect(() => {
     //
     if (selectedMethodObj == null) {
@@ -143,27 +173,24 @@ export default function ContractExplorerSection({ localData }) {
     } else {
       handleRPCJSONObjChange(selectedMethodObj, paramsInput);
     }
-    setTxParamsIsValid(true);
   }, [selectedMethodObj, paramsInput]);
 
   useEffect(() => {
     // TODO: set the logic to handle the wallet events here
-    //function runWalletEventListener(evnt) {
-    //  utils.customWallletEventListener(
-    //    evnt
-    //    //
-    //  );
-    //}
-    //// create event listener for Hana and ICONex wallets
-    //window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
-    //// return the following function to perform cleanup of the event
-    //// listener on component unmount
-    //return function removeCustomEventListener() {
-    //  window.removeEventListener(
-    //    "ICONEX_RELAY_RESPONSE",
-    //    runWalletEventListener
-    //  );
-    //};
+    function runWalletEventListener(evnt) {
+      utils.customWalletEventListener(evnt, handleTxResult);
+    }
+    // create event listener for Hana and ICONex wallets
+    window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+
+    // return the following function to perform cleanup of the event
+    // listener on component unmount
+    return function removeCustomEventListener() {
+      window.removeEventListener(
+        "ICONEX_RELAY_RESPONSE",
+        runWalletEventListener
+      );
+    };
   }, []);
   return (
     <div className={styles.main}>
@@ -262,16 +289,33 @@ export default function ContractExplorerSection({ localData }) {
       <p>RPC JSON:</p>
       <textarea
         className={`${styles.textarea} ${styles.textareaRPCJSON}`}
-        value={txParamsIsValid ? `${txParamsData}` : "** RPC JSON NOT VALID **"}
+        value={
+          txParamsIsValid
+            ? `${JSON.stringify(txParamsData)}`
+            : "** RPC JSON NOT VALID **"
+        }
         readOnly
       ></textarea>
-      <button className={styles.button} onClick={handleSignTx}>
+      <button
+        className={styles.button}
+        onClick={handleSignTx}
+        disabled={!txParamsIsValid}
+        // disabled={true}
+      >
         Sign Tx
       </button>
-      <WalletResponseModal
-        isOpen={walletResponseIsOpen}
-        onClose={handleWalletResponseOnClose}
-      />
+      <Hr />
+      <h3>RPC JSON Result</h3>
+      <p>TX Result hash: {txResultHash == null ? "null" : txResultHash}</p>
+      <textarea
+        className={`${styles.textarea} ${styles.textareaRPCJSON}`}
+        value={txResults == null ? "** RPC JSON RESULT**" : `${txResults}`}
+        readOnly
+      ></textarea>
+      {/* <WalletResponseModal */}
+      {/*   isOpen={walletResponseIsOpen} */}
+      {/*   onClose={handleWalletResponseOnClose} */}
+      {/* /> */}
     </div>
   );
 }

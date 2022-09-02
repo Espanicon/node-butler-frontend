@@ -19,6 +19,7 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
     this.getAllNetworkProposalsFromNB = this.getAllNetworkProposalsFromNB.bind(
       this
     );
+    this.preFormatRPCJSON = this.preFormatRPCJSON.bind(this);
   }
   async getAllNetworkProposalsFromNB() {
     const request = await this.queryMethod(
@@ -123,5 +124,18 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
     }
 
     return logoUrl;
+  }
+  preFormatRPCJSON(rpcObj, from) {
+    let formattedRPCJSON = {
+      id: rpcObj.id,
+      method: rpcObj.method,
+      jsonrpc: rpcObj.jsonrpc,
+      params: {
+        ...rpcObj.params,
+        from: "hx0169e03001a3fa4012092ad4a4ddf2d07681f063"
+        // from: from
+      }
+    };
+    return formattedRPCJSON;
   }
 }
