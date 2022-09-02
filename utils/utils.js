@@ -138,6 +138,22 @@ function parseScore(scoreApi) {
   return parsedScore;
 }
 
+function formatResponsePayload(payload) {
+  let result = { isError: null, result: null, code: null, message: null };
+
+  if (payload.code == null) {
+    // if payload.code doesnt exists then the result is not an error
+    result.isError = false;
+    result.result = payload.result;
+  } else {
+    // if payload.code exists then the result is an error
+    result.isError = true;
+    result.code = payload.code;
+    result.message = payload.message;
+  }
+
+  return result;
+}
 function customWalletEventListener(
   evnt,
   mainCallback,
@@ -147,40 +163,43 @@ function customWalletEventListener(
 ) {
   // fetch event data
   const { type, payload } = evnt.detail;
-  console.log("evnt inside customWalletEventListener");
+  console.log("event");
   console.log(evnt);
 
   // switch case for every type of event raised
-  // switch (type) {
-  //   case "RESPONSE_JSON-RPC":
-  //     // catching the wallet response in the case of a JSON-RPC event raised
+  switch (type) {
+    case "RESPONSE_JSON-RPC":
+      // catching the wallet response in the case of a JSON-RPC event raised
 
-  //     // if preMainCallback was defined execute before mainCallback
-  //     if (preMainCallback == null) {
-  //     } else {
-  //       preMainCallback(payload);
-  //     }
+      // if preMainCallback was defined execute before mainCallback
+      if (preMainCallback == null) {
+      } else {
+        preMainCallback(payload);
+      }
 
-  //     // execute mainCallback with delay defined by setTimeout
-  //     setTimeout(async () => {
-  //       const mainCallbackResponse = await mainCallback(payload.result);
-  //       console.log("mainCallback response");
-  //       console.log(mainCallbackResponse);
-  //     }, 3000);
-  //     break;
-  //   case "CANCEL_JSON-RPC":
-  //     break;
-  //   case "CANCEL_JSON-RPC":
-  //     // if the user cancels ICONex tx and postMainCallback2 was defined
-  //     if (postMainCallback2 == null) {
-  //     } else {
-  //       // postMainCallback2 should be a method that takes a bool value
-  //       // where 'false' is a param that will close the modal window
-  //       postMainCallback2(false);
-  //     }
-  //     break;
-  //   default:
-  // }
+      const parsedPayload = formatResponsePayload(payload);
+      const mainCallbackResponse = mainCallback(parsedPayload);
+      // execute mainCallback with delay defined by setTimeout
+      // setTimeout(async () => {
+      //   const parsedPayload = formatResponsePayload(payload);
+      //   const mainCallbackResponse = await mainCallback(parsedPayload);
+      //   console.log("mainCallback response");
+      //   console.log(mainCallbackResponse);
+      // }, 3000);
+      break;
+    case "CANCEL_JSON-RPC":
+      break;
+    case "CANCEL_JSON-RPC":
+      // if the user cancels ICONex tx and postMainCallback2 was defined
+      if (postMainCallback2 == null) {
+      } else {
+        // postMainCallback2 should be a method that takes a bool value
+        // where 'false' is a param that will close the modal window
+        postMainCallback2(false);
+      }
+      break;
+    default:
+  }
 }
 const utils = {
   data,

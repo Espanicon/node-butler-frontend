@@ -146,8 +146,8 @@ export default function App() {
                   // return <NetworkProposalsSection localData={localData} />;
                   return <NetworkProposalsSection localData={MOCK_DATA} />;
                 case SECTIONS[3].code:
-                  // return <ContractExplorerSection localData={localData} />;
-                  return <ContractExplorerSection localData={MOCK_DATA} />;
+                  return <ContractExplorerSection localData={localData} />;
+                // return <ContractExplorerSection localData={MOCK_DATA} />;
                 default:
                   return <div>404 Unexpected Error</div>;
               }

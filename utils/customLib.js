@@ -3,11 +3,16 @@
 // Imports
 import EspaniconSDKWeb from "@espanicon/espanicon-sdk";
 
+// constants
+const USE_NID = 7;
+// const API_NODE = "api.espanicon.team";
+const API_NODE = "berlin.net.solidwallet.io";
+
 // Node-Butler Lib
 //
 export default class NodeButlerSDK extends EspaniconSDKWeb {
-  constructor() {
-    super();
+  constructor(apiNode = API_NODE) {
+    super(apiNode);
     this.getCPSProposalFullInfoByHash = this.getCPSProposalFullInfoByHash.bind(
       this
     );
@@ -125,17 +130,36 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
 
     return logoUrl;
   }
-  preFormatRPCJSON(rpcObj, from) {
+  preFormatRPCJSON(rpcObj, from, readonly = true) {
     let formattedRPCJSON = {
       id: rpcObj.id,
       method: rpcObj.method,
       jsonrpc: rpcObj.jsonrpc,
       params: {
         ...rpcObj.params,
-        from: "hx0169e03001a3fa4012092ad4a4ddf2d07681f063"
-        // from: from
+        // from: "hx0169e03001a3fa4012092ad4a4ddf2d07681f063"
+        from: from
       }
     };
+
+    if (readonly === false) {
+      formattedRPCJSON.params = {
+        ...formattedRPCJSON.params
+        // timestamp: new Date().getTime() * 1000,
+        // nid: USE_NID,
+        // stepLimit: 8000000
+        // version: 1,
+        // nonce: 1
+      };
+    }
+
+    console.log("formatted rpc json");
+    console.log(formattedRPCJSON);
     return formattedRPCJSON;
   }
 }
+
+// let mock = {
+//   contract: "cxa8676de7549b1ecf2b3a8526432ce71ffa6dbba7",
+//   wallet: "hx0169e03001a3fa4012092ad4a4ddf2d07681f063"
+// };

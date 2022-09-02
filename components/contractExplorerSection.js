@@ -54,11 +54,12 @@ export default function ContractExplorerSection({ localData }) {
     if (localData.auth.successfulLogin) {
       // if user is logged
       const txData = txParamsData;
-      const formattedRPCJSON = preFormatRPCJSON(
-        txData,
-        localData.auth.selectedWallet
-      );
-      dispatchTxEvent(formattedRPCJSON);
+      // const formattedRPCJSON = preFormatRPCJSON(
+      //   txData,
+      //   localData.auth.selectedWallet
+      // );
+      // dispatchTxEvent(formattedRPCJSON);
+      dispatchTxEvent(txData);
       // setWalletResponseIsOpen(true);
     } else {
       alert("Please login first to be able t sign tx with your wallet");
@@ -90,6 +91,7 @@ export default function ContractExplorerSection({ localData }) {
   function handleRPCJSONObjChange(scoreMethodObj, paramsObj) {
     //
     let txObj = null;
+    let formattedRPCJSON = null;
     if (scoreMethodObj.inputs.length > 0) {
       // if the method is not readonly (it has method params)
       txObj = makeICXSendTxRequestObj(
@@ -97,6 +99,11 @@ export default function ContractExplorerSection({ localData }) {
         paramsObj,
         null,
         scoreInput,
+        false
+      );
+      formattedRPCJSON = preFormatRPCJSON(
+        txObj,
+        localData.auth.selectedWallet,
         false
       );
     } else {
@@ -108,14 +115,9 @@ export default function ContractExplorerSection({ localData }) {
         scoreInput,
         false
       );
+      formattedRPCJSON = preFormatRPCJSON(txObj, localData.auth.selectedWallet);
     }
-    const formattedRPCJSON = preFormatRPCJSON(
-      txObj,
-      localData.auth.selectedWallet
-    );
-    console.log("txObj");
-    console.log(formattedRPCJSON);
-    setTxParamsData(txObj);
+    setTxParamsData(formattedRPCJSON);
     // setTxParamsIsValid(true);
   }
 
@@ -163,6 +165,7 @@ export default function ContractExplorerSection({ localData }) {
 
   function handleTxResult(txResult) {
     //
+    console.log("tx result");
     console.log(txResult);
   }
 
