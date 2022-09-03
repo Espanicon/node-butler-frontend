@@ -23,6 +23,9 @@ export default function ContractExplorerSection({ localData }) {
   const [scoreData, setScoreData] = useState(null);
   const [scoreIsValid, setScoreIsValid] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState("");
+  const [selectedMethodIsReadOnly, setSelectedMethodIsReadOnly] = useState(
+    null
+  );
   const [selectedMethodObj, setSelectedMethodObj] = useState(null);
   const [paramsInput, setParamsInput] = useState({});
   const [txParamsIsValid, setTxParamsIsValid] = useState(false);
@@ -70,29 +73,58 @@ export default function ContractExplorerSection({ localData }) {
   function handleScoreMethodSelected(evnt) {
     const selected = evnt.target.value;
     const selectedObj = scoreData.filter(method => method.name === selected)[0];
-    setSelectedMethod(selected);
-    setSelectedMethodObj(selectedObj);
-
     let paramsObj = {};
+    let methodIsReadonly = true; //TODO: should default be true?
+
+    // get the methods params
     if (selectedObj.inputs.length > 0) {
       selectedObj.inputs.map(param => {
         paramsObj[param.name] = "";
       });
     }
 
+    // get if the method is readonly or not
+    if (selectedObj.readonly == null || selectedObj.readonly === "0x0") {
+      methodIsReadonly = false;
+    } else if (selectedObj.readonly === "0x1") {
+      methodIsReadonly = true;
+    } else {
+      // should never happen
+    }
+
+    // set selected method and method object
+    setSelectedMethod(selected);
+    setSelectedMethodObj(selectedObj);
+
     // set method params
     setParamsInput(paramsObj);
     setTxParamsIsValid(true);
+
+    // set if the method is readonly or not
+    setSelectedMethodIsReadOnly(methodIsReadonly);
 
     // pass the method object to build the JSON RPC
     // handleRPCJSONObjChange(selectedObj, paramsObj);
   }
 
-  function handleRPCJSONObjChange(scoreMethodObj, paramsObj) {
+  function handleRPCJSONObjChange(scoreMethodObj, paramsObj = null) {
     //
     let txObj = null;
     let formattedRPCJSON = null;
-    if (scoreMethodObj.inputs.length > 0) {
+    let isReadonly =
+      selectedMethodIsReadOnly === true || selectedMethodIsReadOnly == null
+        ? true
+        : false;
+    if (isReadonly === true) {
+      // if this is a readonly method
+      txObj = makeICXCallRequestObj(
+        scoreMethodObj.name,
+        paramsObj,
+        null,
+        scoreInput,
+        false
+      );
+    } else {
       // if the method is not readonly (it has method params)
       txObj = makeICXSendTxRequestObj(
         scoreMethodObj.name,
@@ -101,22 +133,21 @@ export default function ContractExplorerSection({ localData }) {
         scoreInput,
         false
       );
-      formattedRPCJSON = preFormatRPCJSON(
-        txObj,
-        localData.auth.selectedWallet,
-        false
-      );
-    } else {
-      // if this is a readonly method
-      txObj = makeICXCallRequestObj(
-        scoreMethodObj.name,
-        null,
-        null,
-        scoreInput,
-        false
-      );
-      formattedRPCJSON = preFormatRPCJSON(txObj, localData.auth.selectedWallet);
     }
+
+    console.log("tx object");
+    console.log(isReadonly);
+    console.log(txObj);
+    formattedRPCJSON = preFormatRPCJSON(
+      txObj,
+      localData.auth.selectedWallet,
+      isReadonly
+    );
+    // formattedRPCJSON = preFormatRPCJSON(
+    //   txObj,
+    //   localData.auth.selectedWallet,
+    //   false
+    // );
     setTxParamsData(formattedRPCJSON);
     // setTxParamsIsValid(true);
   }
@@ -154,8 +185,13 @@ export default function ContractExplorerSection({ localData }) {
       fetchScoreApi(value);
     }
     setScoreInput(value);
+
+    // reset the following states to their initial value
     setSelectedMethod("");
     setSelectedMethodObj(null);
+    setSelectedMethodIsReadOnly(null);
+    setTxResults(null);
+    setTxResultHash(null);
   }
 
   async function fetchScoreApi(scoreAddress) {
@@ -167,6 +203,12 @@ export default function ContractExplorerSection({ localData }) {
     //
     console.log("tx result");
     console.log(txResult);
+
+    if (txResult.isError === true) {
+      setTxResults(txResult.message);
+    } else {
+      setTxResults(JSON.stringify(txResult.result));
+    }
   }
 
   useEffect(() => {

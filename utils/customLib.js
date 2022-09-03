@@ -144,11 +144,11 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
 
     if (readonly === false) {
       formattedRPCJSON.params = {
-        ...formattedRPCJSON.params
-        // timestamp: new Date().getTime() * 1000,
-        // nid: USE_NID,
-        // stepLimit: 8000000
-        // version: 1,
+        ...formattedRPCJSON.params,
+        timestamp: new Date().getTime() * 1000,
+        nid: USE_NID,
+        steplimit: 8000000,
+        version: 1
         // nonce: 1
       };
     }
@@ -161,5 +161,6 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
 
 // let mock = {
 //   contract: "cxa8676de7549b1ecf2b3a8526432ce71ffa6dbba7",
+//   governance: "cx0000000000000000000000000000000000000000",
 //   wallet: "hx0169e03001a3fa4012092ad4a4ddf2d07681f063"
 // };
