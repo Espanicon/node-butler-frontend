@@ -325,7 +325,7 @@ export default function ContractExplorerSection({ localData }) {
         </ul>
       )}
       <Hr />
-      <h3>RPC JSON Object</h3>
+      <h3>RPC JSON Request</h3>
       <p>
         A transaction will be signed with your installed wallet (ICONex or Hana)
         with the following RPC JSON Object, verify that the values are correct
@@ -350,7 +350,7 @@ export default function ContractExplorerSection({ localData }) {
         Sign Tx
       </button>
       <Hr />
-      <h3>RPC JSON Result</h3>
+      <h3>RPC JSON Response</h3>
       <p>TX Result hash: {txResultHash == null ? "null" : txResultHash}</p>
       <textarea
         className={`${styles.textarea} ${styles.textareaRPCJSON}`}
