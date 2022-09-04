@@ -201,6 +201,13 @@ function customWalletEventListener(
     default:
   }
 }
+
+function getAllPrepsAddresses(prepData) {
+  let result = prepData.map(eachPrep => {
+    return eachPrep.address;
+  });
+  return result;
+}
 const utils = {
   data,
   samples,
@@ -211,7 +218,8 @@ const utils = {
   parsePrepFormInputs,
   isValidScore,
   parseScore,
-  customWalletEventListener
+  customWalletEventListener,
+  getAllPrepsAddresses
 };
 
 export default utils;

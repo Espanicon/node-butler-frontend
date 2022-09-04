@@ -62,7 +62,7 @@ export default function NetworkProposalsSection({ localData }) {
 
   function handleModalOnOpen(index) {
     setProposalIndex(index);
-    console.log(networkProposals);
+    // console.log(networkProposals);
     setIsOpen(true);
   }
 

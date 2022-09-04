@@ -3,24 +3,31 @@ import { v4 as uuidv4 } from "uuid";
 import Head from "next/head";
 import Link from "next/link";
 import AppLayout, { siteTitle } from "../components/appLayout.js";
-import { LoginModal, utils } from "../components/LoginModal";
+import { LoginModal, utils as loginUtils } from "../components/LoginModal";
 import AppSection from "../components/appSection";
 import OverviewSection from "../components/overviewSection";
 import CPSProposalsSection from "../components/cpsProposalsSection";
 import NetworkProposalsSection from "../components/networkProposalsSection";
 import ContractExplorerSection from "../components/contractExplorerSection";
+import NodeButlerSDK from "../utils/customLib";
+import utils from "../utils/utils";
 import styles from "../styles/app.module.css";
 
 // MOCK DATA
 //
 const MOCK_DATA = {
   auth: {
-    selectedWallet: "hx9fa9d224306b0722099d30471b3c2306421aead7",
+    selectedWallet: "hx9fa9d224306b0722099d30471b3c2306421aead7", //mainnet
     methodUsed: "ICONEX",
     bip44Path: null,
     successfulLogin: true
   }
 };
+
+// constants
+const nodeButlerLib = new NodeButlerSDK();
+const { getPreps } = nodeButlerLib;
+const { getAllPrepsAddresses } = utils;
 // Functions
 //
 function getSections() {
@@ -35,7 +42,7 @@ function getSections() {
 // Constants
 //
 const LOCAL_KEY = "NB-1a96894a-afb9-4050-899b-71e63d5261f2";
-const INIT_LOGIN = utils.getInitLocalData();
+const INIT_LOGIN = loginUtils.getInitLocalData();
 const SECTIONS = getSections();
 const INIT_SECTION = SECTIONS[0];
 
@@ -44,6 +51,8 @@ export default function App() {
   const [loginModalIsOpen, setLoginModalIsOpen] = useState(false);
   const [localData, setLocalData] = useState(INIT_LOGIN);
   const [activeSection, setActiveSection] = useState(INIT_SECTION);
+  const [allPreps, setAllPreps] = useState(null);
+  const [userIsAPrep, setUserIsAPrep] = useState(null);
   /*
    * localData: {
    * selectedWallet: 'hx3e202..',
@@ -66,7 +75,7 @@ export default function App() {
 
   function handleLogout() {
     // close user session
-    handleLocalDataChange(utils.getInitLocalData());
+    handleLocalDataChange(loginUtils.getInitLocalData());
   }
 
   function handleLocalDataChange(newLocalData) {
@@ -74,7 +83,7 @@ export default function App() {
     setLocalData(newLocalData);
 
     // write login data locally to make user session persistance
-    utils.saveDataToLocal(newLocalData, LOCAL_KEY);
+    loginUtils.saveDataToLocal(newLocalData, LOCAL_KEY);
   }
 
   function closeLoginModal() {
@@ -87,9 +96,12 @@ export default function App() {
   function getDataFromLoginModal(loginData) {
     // Callback function that gets called from within LoginModal
     // to pass login data into parent
-    const newLocalData = {
+    let newLocalData = {
+      // auth: MOCK_DATA.auth // TODO: FOR TESTING
       auth: loginData
     };
+    newLocalData.auth.selectedWallet =
+      "hx38f35eff5e5516b48a713fe3c8031c94124191f0"; //berlin
 
     handleLocalDataChange(newLocalData);
   }
@@ -97,9 +109,34 @@ export default function App() {
   function handleActiveSectionChange(newActiveSection) {
     setActiveSection(newActiveSection);
   }
+
   useEffect(() => {
+    if (localData.auth.successfulLogin === false || allPreps == null) {
+      //
+    } else {
+      //
+      if (allPreps.includes(localData.auth.selectedWallet)) {
+        // if the wallet used for login is a prep
+        setUserIsAPrep(true);
+      } else {
+        // if is not a prep
+        setUserIsAPrep(false);
+      }
+    }
+  }, [localData, allPreps]);
+
+  useEffect(() => {
+    async function initialFetch() {
+      const prepsRaw = await getPreps();
+      const prepsParsed = getAllPrepsAddresses(prepsRaw.preps);
+      setAllPreps(prepsParsed);
+    }
+
+    // run initial async data fetch for al preps
+    initialFetch();
+
     // get local login data on first render
-    const userLocalData = utils.getLocalData(LOCAL_KEY);
+    const userLocalData = loginUtils.getLocalData(LOCAL_KEY);
 
     // set loginData state
     handleLocalDataChange(userLocalData);
@@ -110,6 +147,7 @@ export default function App() {
       localData={localData}
       onLogout={handleLogout}
       onLogin={handleLogin}
+      disableLogin={allPreps === null ? true : false}
     >
       <Head>
         <title>{siteTitle}</title>
@@ -133,7 +171,26 @@ export default function App() {
           })}
         </div>
         <div className={styles.mainSection}>
-          {localData.auth.successfulLogin ? (
+          {allPreps == null ? (
+            <div className={styles.logoContainer}>
+              <h1>Fetching Prep Data wait a few seconds before login</h1>
+              <img
+                src="/images/icon-logo.png"
+                className={styles.iconLogo}
+                alt="icon logo"
+              />
+            </div>
+          ) : localData.auth.successfulLogin === false ||
+            userIsAPrep == null ? (
+            <div className={styles.logoContainer}>
+              <h1>Please login</h1>
+              <img
+                src="/images/icon-logo.png"
+                className={styles.iconLogo}
+                alt="icon logo"
+              />
+            </div>
+          ) : userIsAPrep === true ? (
             (() => {
               switch (activeSection.code) {
                 case SECTIONS[0].code:
@@ -154,7 +211,7 @@ export default function App() {
             })()
           ) : (
             <div className={styles.logoContainer}>
-              <h1>Please login</h1>
+              <h1>User is not a Prep</h1>
               <img
                 src="/images/icon-logo.png"
                 className={styles.iconLogo}

@@ -25,7 +25,13 @@ function Breakline() {
   return <div className={styles.breakline}></div>;
 }
 
-export default function AppLayout({ localData, onLogout, onLogin, children }) {
+export default function AppLayout({
+  localData,
+  onLogout,
+  onLogin,
+  disableLogin,
+  children
+}) {
   let checkboxRef = useRef();
 
   function handleLogin() {
@@ -84,6 +90,7 @@ export default function AppLayout({ localData, onLogout, onLogin, children }) {
                 className={styles.menuToggle}
                 type="checkbox"
                 ref={checkboxRef}
+                disabled={disableLogin}
               />
               <label
                 className={styles.menuButtonContainer}
