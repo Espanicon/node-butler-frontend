@@ -47,7 +47,11 @@ const DATA = {
   }
 };
 
-export default function NetworkProposalsSection({ localData }) {
+export default function NetworkProposalsSection({
+  localData,
+  userIsPrep,
+  children
+}) {
   const [networkProposals, setNetworkProposals] = useState(null);
   const [activeNetworkProposals, setActiveNetworkProposals] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -96,7 +100,7 @@ export default function NetworkProposalsSection({ localData }) {
     // run initial data fetch
     fetchInitialData();
   }, []);
-  return (
+  return userIsPrep === true ? (
     <div className={styles.main}>
       <h2>Active network proposals</h2>
       {activeNetworkProposals == null ? (
@@ -131,6 +135,8 @@ export default function NetworkProposalsSection({ localData }) {
         index={proposalIndex}
       />
     </div>
+  ) : (
+    children
   );
 }
 

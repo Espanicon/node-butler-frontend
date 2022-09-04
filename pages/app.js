@@ -100,8 +100,8 @@ export default function App() {
       // auth: MOCK_DATA.auth // TODO: FOR TESTING
       auth: loginData
     };
-    newLocalData.auth.selectedWallet =
-      "hx38f35eff5e5516b48a713fe3c8031c94124191f0"; //berlin
+    // newLocalData.auth.selectedWallet =
+    //   "hx38f35eff5e5516b48a713fe3c8031c94124191f0"; //berlin
 
     handleLocalDataChange(newLocalData);
   }
@@ -172,52 +172,57 @@ export default function App() {
         </div>
         <div className={styles.mainSection}>
           {allPreps == null ? (
-            <div className={styles.logoContainer}>
-              <h1>Fetching Prep Data wait a few seconds before login</h1>
-              <img
-                src="/images/icon-logo.png"
-                className={styles.iconLogo}
-                alt="icon logo"
-              />
-            </div>
+            <CustomMessage msg="Fetching Prep Data wait a few seconds before login" />
           ) : localData.auth.successfulLogin === false ||
             userIsAPrep == null ? (
-            <div className={styles.logoContainer}>
-              <h1>Please login</h1>
-              <img
-                src="/images/icon-logo.png"
-                className={styles.iconLogo}
-                alt="icon logo"
-              />
-            </div>
-          ) : userIsAPrep === true ? (
+            <CustomMessage msg="Please login" />
+          ) : (
             (() => {
               switch (activeSection.code) {
                 case SECTIONS[0].code:
                   // return <OverviewSection localData={localData} />;
-                  return <OverviewSection localData={MOCK_DATA} />;
+                  return (
+                    <OverviewSection
+                      localData={MOCK_DATA}
+                      userIsPrep={userIsAPrep}
+                    >
+                      <CustomMessage msg="User is not a Prep" />
+                    </OverviewSection>
+                  );
                 case SECTIONS[1].code:
                   // return <CPSProposalsSection localData={localData} />;
-                  return <CPSProposalsSection localData={MOCK_DATA} />;
+                  return (
+                    <CPSProposalsSection
+                      localData={MOCK_DATA}
+                      userIsPrep={userIsAPrep}
+                    >
+                      <CustomMessage msg="User is not a Prep" />
+                    </CPSProposalsSection>
+                  );
                 case SECTIONS[2].code:
                   // return <NetworkProposalsSection localData={localData} />;
-                  return <NetworkProposalsSection localData={MOCK_DATA} />;
+                  return (
+                    <NetworkProposalsSection
+                      localData={MOCK_DATA}
+                      userIsPrep={userIsAPrep}
+                    >
+                      <CustomMessage msg="User is not a Prep" />
+                    </NetworkProposalsSection>
+                  );
                 case SECTIONS[3].code:
-                  return <ContractExplorerSection localData={localData} />;
+                  return (
+                    <ContractExplorerSection
+                      localData={localData}
+                      userIsPrep={userIsAPrep}
+                    >
+                      <CustomMessage msg="User is not a Prep" />
+                    </ContractExplorerSection>
+                  );
                 // return <ContractExplorerSection localData={MOCK_DATA} />;
                 default:
                   return <div>404 Unexpected Error</div>;
               }
             })()
-          ) : (
-            <div className={styles.logoContainer}>
-              <h1>User is not a Prep</h1>
-              <img
-                src="/images/icon-logo.png"
-                className={styles.iconLogo}
-                alt="icon logo"
-              />
-            </div>
           )}
         </div>
         <LoginModal
@@ -230,6 +235,18 @@ export default function App() {
   );
 }
 
+function CustomMessage({ msg }) {
+  return (
+    <div className={styles.logoContainer}>
+      <h1>{msg}</h1>
+      <img
+        src="/images/icon-logo.png"
+        className={styles.iconLogo}
+        alt="icon logo"
+      />
+    </div>
+  );
+}
 // (() => {
 //   switch (activeSection.code) {
 //     default:

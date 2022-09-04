@@ -13,12 +13,13 @@ const {
   makeICXCallRequestObj,
   scores,
   makeICXSendTxRequestObj,
-  preFormatRPCJSON
+  preFormatRPCJSON,
+  USE_NID
 } = nodeButlerLib;
 
 // const USE_NID = scores.nid.mainnet;
 
-export default function ContractExplorerSection({ localData }) {
+export default function ContractExplorerSection({ localData, userIsPrep }) {
   const [scoreInput, setScoreInput] = useState("");
   const [scoreData, setScoreData] = useState(null);
   const [scoreIsValid, setScoreIsValid] = useState(false);
@@ -124,29 +125,38 @@ export default function ContractExplorerSection({ localData }) {
         scoreInput,
         false
       );
+      formattedRPCJSON = preFormatRPCJSON(
+        txObj,
+        localData.auth.selectedWallet,
+        isReadonly
+      );
     } else {
       // if the method is not readonly (it has method params)
-      txObj = makeICXSendTxRequestObj(
+      // txObj = makeICXSendTxRequestObj(
+      //   scoreMethodObj.name,
+      //   paramsObj,
+      //   null,
+      //   scoreInput,
+      //   false
+      // );
+      txObj = makeTxCallRPCObj(
+        localData.auth.selectedWallet,
+        scoreInput,
         scoreMethodObj.name,
         paramsObj,
-        null,
-        scoreInput,
-        false
+        USE_NID
       );
+      formattedRPCJSON = txObj;
     }
 
     console.log("tx object");
     console.log(isReadonly);
     console.log(txObj);
-    formattedRPCJSON = preFormatRPCJSON(
-      txObj,
-      localData.auth.selectedWallet,
-      isReadonly
-    );
+    console.log(formattedRPCJSON);
     // formattedRPCJSON = preFormatRPCJSON(
     //   txObj,
     //   localData.auth.selectedWallet,
-    //   false
+    //   isReadonly
     // );
     setTxParamsData(formattedRPCJSON);
     // setTxParamsIsValid(true);

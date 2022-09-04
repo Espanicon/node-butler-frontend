@@ -8,7 +8,11 @@ import GenericModal from "./genericModal";
 const nodeButlerLib = new NodeButlerSDK();
 const { getCPSProposalsFromNB, getCPSProposalFullInfoByHash } = nodeButlerLib;
 
-export default function CPSProposalsSection({ localData }) {
+export default function CPSProposalsSection({
+  localData,
+  userIsPrep,
+  children
+}) {
   const [CPSProposals, setCPSProposals] = useState(null);
   const [proposalInfo, setProposalInfo] = useState(false);
   const [proposalIndex, setProposalIndex] = useState(false);
@@ -48,7 +52,7 @@ export default function CPSProposalsSection({ localData }) {
     // fetch CPS Proposal data from node-butler backend
     asyncFetch();
   }, []);
-  return (
+  return userIsPrep === true ? (
     <div className={styles.main}>
       <div className={styles.header}>
         <h2>CPS Proposals</h2>
@@ -226,6 +230,8 @@ export default function CPSProposalsSection({ localData }) {
         )}
       </GenericModal>
     </div>
+  ) : (
+    children
   );
 }
 

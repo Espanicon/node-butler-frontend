@@ -20,7 +20,7 @@ const {
 const { parseBonderFormInputs, parsePrepFormInputs, samples } = utils;
 const { details: CODE, setPrep: SETPREP, details2: DETAILSJSON } = samples;
 
-export default function OverviewSection({ localData }) {
+export default function OverviewSection({ localData, userIsPrep, children }) {
   const [prepLogo, setPrepLogo] = useState(null);
   const [overviewState, setOverviewState] = useState(null);
   const [prepDetailsState, setPrepDetailsState] = useState(null);
@@ -108,7 +108,7 @@ export default function OverviewSection({ localData }) {
     runAsync();
   }, []);
 
-  return (
+  return userIsPrep === true ? (
     <div className={styles.main}>
       <h2>Overview</h2>
       {overviewState === null ? (
@@ -347,5 +347,7 @@ export default function OverviewSection({ localData }) {
         </div>
       </div>
     </div>
+  ) : (
+    children
   );
 }

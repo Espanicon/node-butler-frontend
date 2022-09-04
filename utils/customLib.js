@@ -25,6 +25,7 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
       this
     );
     this.preFormatRPCJSON = this.preFormatRPCJSON.bind(this);
+    this.USE_NID = USE_NID;
   }
   async getAllNetworkProposalsFromNB() {
     const request = await this.queryMethod(
