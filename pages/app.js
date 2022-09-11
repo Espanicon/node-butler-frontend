@@ -180,30 +180,30 @@ export default function App() {
             (() => {
               switch (activeSection.code) {
                 case SECTIONS[0].code:
-                  // return <OverviewSection localData={localData} />;
                   return (
                     <OverviewSection
-                      localData={MOCK_DATA}
+                      // localData={MOCK_DATA}
+                      localData={localData}
                       userIsPrep={userIsAPrep}
                     >
                       <CustomMessage msg="User is not a Prep" />
                     </OverviewSection>
                   );
                 case SECTIONS[1].code:
-                  // return <CPSProposalsSection localData={localData} />;
                   return (
                     <CPSProposalsSection
                       localData={MOCK_DATA}
+                      // localData={localData}
                       userIsPrep={userIsAPrep}
                     >
                       <CustomMessage msg="User is not a Prep" />
                     </CPSProposalsSection>
                   );
                 case SECTIONS[2].code:
-                  // return <NetworkProposalsSection localData={localData} />;
                   return (
                     <NetworkProposalsSection
-                      localData={MOCK_DATA}
+                      // localData={MOCK_DATA}
+                      localData={localData}
                       userIsPrep={userIsAPrep}
                     >
                       <CustomMessage msg="User is not a Prep" />
@@ -212,13 +212,13 @@ export default function App() {
                 case SECTIONS[3].code:
                   return (
                     <ContractExplorerSection
+                      // localData={MOCK_DATA}
                       localData={localData}
                       userIsPrep={userIsAPrep}
                     >
                       <CustomMessage msg="User is not a Prep" />
                     </ContractExplorerSection>
                   );
-                // return <ContractExplorerSection localData={MOCK_DATA} />;
                 default:
                   return <div>404 Unexpected Error</div>;
               }

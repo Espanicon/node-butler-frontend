@@ -7,7 +7,7 @@ import utils from "../utils/utils";
 
 const ICON_LOGO = "/images/icon-logo.png";
 
-const nodeButlerLib = new NodeButlerSDK("api.espanicon.team");
+const nodeButlerLib = new NodeButlerSDK();
 const {
   getPrep,
   parsePrepData,
@@ -86,6 +86,10 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
         : null;
       // get overall prep data
       const prepData = await getPrep(loggedPrep);
+      console.log("login address");
+      console.log(loggedPrep);
+      console.log("prep data");
+      console.log(prepData);
       const parsedPrepData = parsePrepData(prepData);
 
       // get bonder data
@@ -93,11 +97,14 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
       const parsedBonderList = utils.parseGetBonderList(bonderList);
 
       // get prep details data
-      const prepDetails = await getPrepFromNB(loggedPrep);
-      const parsedPrepDetails = parsePrepFromNB(prepDetails);
+      // TODO: uncomment after testing
+      // const prepDetails = await getPrepFromNB(loggedPrep);
+      // const parsedPrepDetails = parsePrepFromNB(prepDetails);
 
       // get prep logo data
-      const prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
+      // TODO: uncomment after testing
+      // const prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
+      const prepLogoUrl = null;
       setPrepLogo(prepLogoUrl);
 
       // update states

@@ -4,9 +4,24 @@
 import EspaniconSDKWeb from "@espanicon/espanicon-sdk";
 
 // constants
-const USE_NID = 7;
+const API_DATA = {
+  mainnet: {
+    nid: 1,
+    node: "api.espanicon.team"
+  },
+  berlin: {
+    nid: 7,
+    node: "berlin.net.solidwallet.io"
+  },
+  local: {
+    nid: 3,
+    node: "server01.espanicon.team"
+  }
+};
+const USE_NID = API_DATA.local.nid;
+const API_NODE = API_DATA.local.node;
 // const API_NODE = "api.espanicon.team";
-const API_NODE = "berlin.net.solidwallet.io";
+// const API_NODE = "berlin.net.solidwallet.io";
 
 // Node-Butler Lib
 //
