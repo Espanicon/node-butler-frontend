@@ -106,7 +106,14 @@ function prepareForQueryMethod(url) {
 
 function parseBonderFormInputs(rawInputState) {
   //
-  console.log(rawInputState);
+  const objKeys = Object.keys(rawInputState);
+  let validWallets = [];
+  for (let each of objKeys) {
+    if (isValidICONAddress(rawInputState[each])) {
+      validWallets.push(rawInputState[each]);
+    }
+  }
+  return validWallets;
 }
 function parsePrepFormInputs(rawInputState) {
   //
@@ -117,6 +124,11 @@ function isValidScore(scoreAddress) {
   // check is the input is a valid SCORE address
   const regex = /([cC][xX][a-fA-F0-9]{40})$/;
   return regex.test(scoreAddress);
+}
+function isValidICONAddress(address) {
+  // check is the input is a valid ICON Wallet address
+  const regex = /([hH][xX][a-fA-F0-9]{40})$/;
+  return regex.test(address);
 }
 
 function parseScore(scoreApi) {
@@ -217,6 +229,7 @@ const utils = {
   parseBonderFormInputs,
   parsePrepFormInputs,
   isValidScore,
+  isValidICONAddress,
   parseScore,
   customWalletEventListener,
   getAllPrepsAddresses

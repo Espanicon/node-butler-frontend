@@ -17,7 +17,36 @@ const {
   getPrepLogoUrl
 } = nodeButlerLib;
 
-const { parseBonderFormInputs, parsePrepFormInputs, samples } = utils;
+// Constants
+const initBonderForm = {
+  bonder1: "",
+  bonder2: "",
+  bonder3: "",
+  bonder4: "",
+  bonder5: "",
+  bonder6: "",
+  bonder7: "",
+  bonder8: "",
+  bonder9: "",
+  bonder10: ""
+};
+
+const initPrepDetailsForm = {
+  name: "",
+  email: "",
+  country: "",
+  city: "",
+  website: "",
+  details: "",
+  nodeAddress: ""
+};
+
+const {
+  parseBonderFormInputs,
+  parsePrepFormInputs,
+  samples,
+  isValidICONAddress
+} = utils;
 const { details: CODE, setPrep: SETPREP, details2: DETAILSJSON } = samples;
 
 export default function OverviewSection({ localData, userIsPrep, children }) {
@@ -25,27 +54,9 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
   const [overviewState, setOverviewState] = useState(null);
   const [prepDetailsState, setPrepDetailsState] = useState(null);
   const [bondedInfoState, setBondedInfoState] = useState(null);
-  const [bonderForm, setBonderForm] = useState({
-    bonder1: "",
-    bonder2: "",
-    bonder3: "",
-    bonder4: "",
-    bonder5: "",
-    bonder6: "",
-    bonder7: "",
-    bonder8: "",
-    bonder9: "",
-    bonder10: ""
-  });
-  const [prepDetailsForm, setPrepDetailsForm] = useState({
-    name: "",
-    email: "",
-    country: "",
-    city: "",
-    website: "",
-    details: "",
-    nodeAddress: ""
-  });
+  const [txResults, setTxResults] = useState(null);
+  const [bonderForm, setBonderForm] = useState(initBonderForm);
+  const [prepDetailsForm, setPrepDetailsForm] = useState(initPrepDetailsForm);
 
   function setImgError(evnt) {
     evnt.currentTarget.src = ICON_LOGO;
@@ -62,7 +73,8 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
   }
 
   function handleBonderFormSubmit() {
-    parseBonderFormInputs(bonderForm);
+    const arrayOfValidAddresses = parseBonderFormInputs(bonderForm);
+    console.log(arrayOfValidAddresses);
   }
 
   function handlePrepFormInputChange(evnt) {
@@ -79,6 +91,17 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
     parsePrepFormInputs(prepDetailsForm);
   }
 
+  function handleTxResult(txResult) {
+    console.log("tx result");
+    console.log(txResult);
+
+    if (txResult.isError === true) {
+      setTxResults(txResult.message);
+    } else {
+      setTxResults(JSON.stringify(txResult.result));
+    }
+  }
+
   useEffect(() => {
     async function runAsync() {
       const loggedPrep = localData.auth.successfulLogin
@@ -86,10 +109,6 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
         : null;
       // get overall prep data
       const prepData = await getPrep(loggedPrep);
-      console.log("login address");
-      console.log(loggedPrep);
-      console.log("prep data");
-      console.log(prepData);
       const parsedPrepData = parsePrepData(prepData);
 
       // get bonder data
@@ -98,13 +117,16 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
 
       // get prep details data
       // TODO: uncomment after testing
-      // const prepDetails = await getPrepFromNB(loggedPrep);
-      // const parsedPrepDetails = parsePrepFromNB(prepDetails);
+      const prepDetails = await getPrepFromNB(loggedPrep);
+      let prepLogoUrl = null;
+
+      if (prepDetails == null) {
+      } else {
+        const parsedPrepDetails = parsePrepFromNB(prepDetails);
+        prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
+      }
 
       // get prep logo data
-      // TODO: uncomment after testing
-      // const prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
-      const prepLogoUrl = null;
       setPrepLogo(prepLogoUrl);
 
       // update states
@@ -112,7 +134,24 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
       setBondedInfoState(parsedBonderList);
     }
 
+    // run async fetch
     runAsync();
+
+    // define wallet event listener
+    function runWalletEventListener(evnt) {
+      utils.customWalletEventListener(evnt, handleTxResult);
+    }
+    // create event listener for Hana and ICONex wallets
+    window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+
+    // return the following function to perform cleanup of the event
+    // listener on component unmount
+    return function removeCustomEventListener() {
+      window.removeEventListener(
+        "ICONEX_RELAY_RESPONSE",
+        runWalletEventListener
+      );
+    };
   }, []);
 
   return userIsPrep === true ? (
@@ -201,54 +240,42 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
               alignSelf: "center"
             }}
           >
-            <table className={styles.tableSetPrep}>
-              <thead>
-                <tr>
-                  {[
-                    "Bonder 1:",
-                    "Bonder 2:",
-                    "Bonder 3:",
-                    "Bonder 4:",
-                    "Bonder 5:",
-                    "Bonder 6:",
-                    "Bonder 7:",
-                    "Bonder 8:",
-                    "Bonder 9:",
-                    "Bonder 10:"
-                  ].map((label, index) => {
-                    return <th key={`bonder-header-${index}`}>{label}</th>;
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {[
-                    ["bonder1", bonderForm.bonder1],
-                    ["bonder2", bonderForm.bonder2],
-                    ["bonder3", bonderForm.bonder3],
-                    ["bonder4", bonderForm.bonder4],
-                    ["bonder5", bonderForm.bonder5],
-                    ["bonder6", bonderForm.bonder6],
-                    ["bonder7", bonderForm.bonder7],
-                    ["bonder8", bonderForm.bonder8],
-                    ["bonder9", bonderForm.bonder9],
-                    ["bonder10", bonderForm.bonder10]
-                  ].map((arrItem, index) => {
-                    return (
-                      <td key={`bonder-item-${index}`}>
-                        <input
-                          type="text"
-                          name={arrItem[0]}
-                          value={arrItem[1]}
-                          onChange={handleFormInputChange}
-                        />
-                      </td>
-                    );
-                  })}
-                </tr>
-              </tbody>
-              <tfoot></tfoot>
-            </table>
+            <div className={styles.tableSetPrep}>
+              {[
+                ["bonder1", bonderForm.bonder1, "Bonder 1:"],
+                ["bonder2", bonderForm.bonder2, "Bonder 2:"],
+                ["bonder3", bonderForm.bonder3, "Bonder 3:"],
+                ["bonder4", bonderForm.bonder4, "Bonder 4:"],
+                ["bonder5", bonderForm.bonder5, "Bonder 5:"],
+                ["bonder6", bonderForm.bonder6, "Bonder 6:"],
+                ["bonder7", bonderForm.bonder7, "Bonder 7:"],
+                ["bonder8", bonderForm.bonder8, "Bonder 8:"],
+                ["bonder9", bonderForm.bonder9, "Bonder 9:"],
+                ["bonder10", bonderForm.bonder10, "Bonder 10:"]
+              ].map((arrItem, index) => {
+                return (
+                  <div
+                    key={`bonder-item-${index}`}
+                    className={styles.bonderTableRow}
+                  >
+                    <p className={styles.tableRowLabel}>
+                      <b>{arrItem[2]}</b>
+                    </p>
+                    <input
+                      type="text"
+                      name={arrItem[0]}
+                      value={arrItem[1]}
+                      onChange={handleFormInputChange}
+                      className={
+                        isValidICONAddress(arrItem[1]) === true
+                          ? `${styles.tableRowInput} ${styles.tableRowInputValid}`
+                          : `${styles.tableRowInput} ${styles.tableRowInputInvalid}`
+                      }
+                    />
+                  </div>
+                );
+              })}
+            </div>
             <button className={styles.button} onClick={handleBonderFormSubmit}>
               Submit
             </button>
