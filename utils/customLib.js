@@ -26,8 +26,8 @@ const API_NODE = API_DATA.local.node;
 // Node-Butler Lib
 //
 export default class NodeButlerSDK extends EspaniconSDKWeb {
-  constructor(apiNode = API_NODE) {
-    super(apiNode);
+  constructor(apiNode = API_NODE, nid = USE_NID) {
+    super(apiNode, nid);
     this.getCPSProposalFullInfoByHash = this.getCPSProposalFullInfoByHash.bind(
       this
     );
@@ -41,6 +41,7 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
     );
     this.preFormatRPCJSON = this.preFormatRPCJSON.bind(this);
     this.USE_NID = USE_NID;
+    this.getParsedTxResult = this.getParsedTxResult.bind(this);
   }
   async getAllNetworkProposalsFromNB() {
     const request = await this.queryMethod(
@@ -172,6 +173,36 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
     console.log("formatted rpc json");
     console.log(formattedRPCJSON);
     return formattedRPCJSON;
+  }
+
+  async getParsedTxResult(hash) {
+    // get transaction result by tx hash
+    let txResult = {
+      txExists: false,
+      txHash: null,
+      error: null,
+      failure: null,
+      status: 0
+    };
+    try {
+      const result = await this.getTxResult(hash);
+      return {
+        ...txResult,
+        ...result,
+        txExists: true,
+        status: parseInt(result.status, 16)
+      };
+    } catch (err) {
+      console.log("error running getTxResult()");
+      console.log(err);
+      return {
+        ...txResult,
+        status: 0,
+        txHash: hash,
+        error: `Error running getTxResult(). ${err}`,
+        failure: { code: "-1", message: err }
+      };
+    }
   }
 }
 
