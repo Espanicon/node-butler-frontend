@@ -68,7 +68,6 @@ export default function ContractExplorerSection({ localData, userIsPrep }) {
     } else {
       alert("Please login first to be able t sign tx with your wallet");
     }
-    // console.log(localData);
   }
 
   function handleScoreMethodSelected(evnt) {

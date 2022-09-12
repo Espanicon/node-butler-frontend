@@ -18,6 +18,7 @@
 }
 .main {
   width: 80%;
+  max-width: 800px;
   max-height: 100%;
   background-color: #ffffff;
   padding: 10px;

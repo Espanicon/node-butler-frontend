@@ -18,7 +18,8 @@
   max-width: 800px;
   align-self: center;
 }
-.topSectionInfo {
+.topSectionInfo,
+.modalContainer {
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
@@ -87,7 +88,7 @@
 .setPrepForm .button {
   align-self: flex-end;
 }
-.tableSetPrep {
+.table {
   display: flex;
   flex-flow: column nowrap;
   /* align-self: center; */
@@ -95,9 +96,11 @@
   border: 1px solid #d6d3d1;
   padding: 10px;
 }
-.bonderTableRow {
+.tableRow {
   justify-content: space-between;
   margin: 5px;
+  display: flex;
+  flex-flow: row nowrap;
 }
 .tableRowLabel {
   margin: 0px 4px;
@@ -126,7 +129,3 @@
 /* .tableSetPrep > thead { */
 /*   margin-right: 5px; */
 /* } */
-.bonderTableRow {
-  display: flex;
-  flex-flow: row nowrap;
-}

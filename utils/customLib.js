@@ -42,6 +42,7 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
     this.preFormatRPCJSON = this.preFormatRPCJSON.bind(this);
     this.USE_NID = USE_NID;
     this.getParsedTxResult = this.getParsedTxResult.bind(this);
+    this.setPrep = this.setPrep.bind(this);
   }
   async getAllNetworkProposalsFromNB() {
     const request = await this.queryMethod(
@@ -203,6 +204,15 @@ export default class NodeButlerSDK extends EspaniconSDKWeb {
         failure: { code: "-1", message: err }
       };
     }
+  }
+
+  setPrep(wallet, prepData) {
+    return this.makeTxCallRPCObj(
+      wallet,
+      this.scores.mainnet.governance,
+      "setPRep",
+      prepData
+    );
   }
 }
 

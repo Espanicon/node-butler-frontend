@@ -116,8 +116,30 @@ function parseBonderFormInputs(rawInputState) {
   return validWallets;
 }
 function parsePrepFormInputs(rawInputState) {
+  let result = {};
+  const objKeys = Object.keys(rawInputState);
+  let resultIsNotEmpty = false;
+
+  for (let each of objKeys) {
+    if (validateNonEmptyString(rawInputState[each])) {
+      result[each] = rawInputState[each];
+      resultIsNotEmpty = true;
+    } else {
+    }
+  }
+
+  if (resultIsNotEmpty) {
+    return result;
+  } else {
+    return null;
+  }
+}
+
+function validateNonEmptyString(string) {
   //
-  console.log(rawInputState);
+  const regex = /^\s*$/;
+
+  return !regex.test(string);
 }
 
 function isValidScore(scoreAddress) {
@@ -198,8 +220,6 @@ function customWalletEventListener(
       //   console.log("mainCallback response");
       //   console.log(mainCallbackResponse);
       // }, 3000);
-      break;
-    case "CANCEL_JSON-RPC":
       break;
     case "CANCEL_JSON-RPC":
       // if the user cancels ICONex tx and postMainCallback2 was defined

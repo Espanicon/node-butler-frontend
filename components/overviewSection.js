@@ -17,7 +17,9 @@ const {
   parsePrepFromNB,
   getPrepLogoUrl,
   setBonderList,
-  getParsedTxResult
+  getParsedTxResult,
+  makeTxCallRPCObj,
+  setPrep
 } = nodeButlerLib;
 
 // Constants
@@ -59,6 +61,7 @@ const { details: CODE, setPrep: SETPREP, details2: DETAILSJSON } = samples;
 
 export default function OverviewSection({ localData, userIsPrep, children }) {
   const [prepLogo, setPrepLogo] = useState(null);
+  // const [overviewState, setOverviewState] = useState(initPrepDetailsForm);
   const [overviewState, setOverviewState] = useState(null);
   const [prepDetailsState, setPrepDetailsState] = useState(null);
   const [bondedInfoState, setBondedInfoState] = useState(null);
@@ -105,14 +108,41 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
   }
 
   function handleBonderFormSubmit() {
-    if (localData.auth.successfulLogin) {
-      const arrayOfValidAddresses = parseBonderFormInputs(bonderForm);
-      const txData = setBonderList(
-        localData.auth.selectedWallet,
-        arrayOfValidAddresses
-      );
+    handleFormSubmit("bond");
+  }
 
-      dispatchTxEvent(txData);
+  function handlePrepFormSubmit() {
+    handleFormSubmit("prep");
+  }
+
+  function handleFormSubmit(type) {
+    if (localData.auth.successfulLogin) {
+      let inputData = null;
+      let txData = null;
+
+      switch (type) {
+        case "bond":
+          inputData = parseBonderFormInputs(bonderForm);
+          txData = setBonderList(localData.auth.selectedWallet, inputData);
+          break;
+        case "prep":
+          inputData = parsePrepFormInputs(prepDetailsForm);
+
+          if (inputData == null) {
+          } else {
+            txData = setPrep(localData.auth.selectedWallet, inputData);
+          }
+          break;
+        default:
+          break;
+      }
+
+      // dispatch event to wallet
+      if (txData == null) {
+        alert("Data for transaction is invalid");
+      } else {
+        dispatchTxEvent(txData);
+      }
     } else {
       alert("Please login first to be able t sign tx with your wallet");
     }
@@ -126,10 +156,6 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
 
       return newState;
     });
-  }
-
-  function handlePrepFormSubmit() {
-    parsePrepFormInputs(prepDetailsForm);
   }
 
   // function handleTxResult(txResults) {
@@ -226,7 +252,13 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
     }
 
     function runWalletEventListener(evnt) {
-      utils.customWalletEventListener(evnt, handleWalletResponse);
+      utils.customWalletEventListener(
+        evnt,
+        handleWalletResponse,
+        null,
+        null,
+        handleWalletModalOnClose
+      );
     }
 
     // create event listener for Hana and ICONex wallets
@@ -332,7 +364,7 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
                   alignSelf: "center"
                 }}
               >
-                <div className={styles.tableSetPrep}>
+                <div className={styles.table}>
                   {[
                     ["bonder1", bonderForm.bonder1, "Bonder 1:"],
                     ["bonder2", bonderForm.bonder2, "Bonder 2:"],
@@ -348,7 +380,7 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
                     return (
                       <div
                         key={`bonder-item-${index}`}
-                        className={styles.bonderTableRow}
+                        className={styles.tableRow}
                       >
                         <p className={styles.tableRowLabel}>
                           <b>{arrItem[2]}</b>
@@ -427,48 +459,40 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
                   alignSelf: "center"
                 }}
               >
-                <table className={styles.tableSetPrep}>
-                  <thead>
-                    <tr>
-                      {[
-                        "Name:",
-                        "Email:",
-                        "Country:",
-                        "City:",
-                        "Website:",
-                        "Details:",
-                        "nodeAddress:"
-                      ].map((label, index) => {
-                        return <th key={`prep-header-${index}`}>{label}</th>;
-                      })}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      {[
-                        ["name", prepDetailsForm.name],
-                        ["email", prepDetailsForm.email],
-                        ["country", prepDetailsForm.country],
-                        ["city", prepDetailsForm.city],
-                        ["website", prepDetailsForm.website],
-                        ["details", prepDetailsForm.details],
-                        ["nodeAddress", prepDetailsForm.nodeAddress]
-                      ].map((arrItem, index) => {
-                        return (
-                          <td key={`prep-item-${index}`}>
-                            <input
-                              type="text"
-                              name={arrItem[0]}
-                              value={arrItem[1]}
-                              onChange={handlePrepFormInputChange}
-                            />
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  </tbody>
-                  <tfoot></tfoot>
-                </table>
+                <div className={styles.table}>
+                  {[
+                    ["name", prepDetailsForm.name, "Name:"],
+                    ["email", prepDetailsForm.email, "Email:"],
+                    ["country", prepDetailsForm.country, "Country:"],
+                    ["city", prepDetailsForm.city, "City:"],
+                    ["website", prepDetailsForm.website, "Website:"],
+                    ["details", prepDetailsForm.details, "Details:"],
+                    ["nodeAddress", prepDetailsForm.nodeAddress, "nodeAddress:"]
+                  ].map((arrItem, index) => {
+                    return (
+                      <div
+                        key={`prep-item-${index}`}
+                        className={styles.tableRow}
+                      >
+                        <p className={styles.tableRowLabel}>
+                          <b>{arrItem[2]}</b>
+                        </p>
+                        <input
+                          type="text"
+                          placeholder={
+                            overviewState == null ||
+                            overviewState[arrItem[0]] == null
+                              ? ""
+                              : `${overviewState[arrItem[0]]}`
+                          }
+                          name={arrItem[0]}
+                          value={arrItem[1]}
+                          onChange={handlePrepFormInputChange}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
                 <button
                   className={styles.button}
                   onClick={handlePrepFormSubmit}
@@ -501,8 +525,16 @@ function WalletResponseModal({ isOpen, onClose, txData, walletResponse }) {
 
   return (
     <GenericModal isOpen={isOpen} onClose={onClose} useSmall={true}>
-      <div>
-        <h2>test on modal</h2>
+      <div className={styles.modalContainer}>
+        {walletResponse == null ? (
+          <LoadingComponent />
+        ) : (
+          <>
+            <h2>Transaction Result</h2>
+            <p>Transaction State: {txData.status ? "SUCCESS" : "FAILED"}</p>
+            <p>Transaction hash: {txData.txHash}</p>
+          </>
+        )}
       </div>
     </GenericModal>
   );
