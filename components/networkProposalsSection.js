@@ -2,11 +2,17 @@ import { useState, useEffect } from "react";
 import styles from "../styles/networkProposalsSection.module.css";
 import { Hr, LoadingComponent } from "./customComponents";
 import NodeButlerSDK from "../utils/customLib";
+import utils from "../utils/utils";
 import { v4 as uuidv4 } from "uuid";
 import GenericModal from "./genericModal";
 
 const nodeButlerLib = new NodeButlerSDK();
-const { getAllNetworkProposals } = nodeButlerLib;
+const {
+  getAllNetworkProposals,
+  getNetworkProposal,
+  approveNetworkProposal,
+  rejectNetworkProposal
+} = nodeButlerLib;
 
 const DATA = {
   statusTypes: {
@@ -86,9 +92,6 @@ export default function NetworkProposalsSection({
       }
     }
 
-    console.log("all network proposals");
-    console.log(allProposalsData);
-    console.log(activeProposals);
     setActiveNetworkProposals(activeProposals);
   }
 
@@ -159,6 +162,7 @@ export default function NetworkProposalsSection({
 function CustomCard2({ eachProposal, index }) {
   const [prepsVoting, setPrepsVoting] = useState(null);
   const [hasVoted, setHasVoted] = useState(null);
+  const [networkProposalData, setNetworkProposalData] = useState(null);
 
   let statusTitle =
     DATA.statusTypes[eachProposal.status] == null
@@ -177,6 +181,26 @@ function CustomCard2({ eachProposal, index }) {
       ? DATA.imgSrc["0x0"]
       : DATA.imgSrc[eachProposal.status];
 
+  useEffect(() => {
+    async function initialFetch() {
+      //
+      const proposalData = await getNetworkProposal(eachProposal.id);
+
+      const votes = utils.getProposalVotes(proposalData.vote);
+      setPrepsVoting(votes);
+      console.log("votes");
+      console.log(votes);
+    }
+
+    // run initial fetch
+    initialFetch();
+  }, []);
+
+  useEffect(() => {
+    console.log("preps voting");
+    console.log(prepsVoting);
+  }, [prepsVoting]);
+
   return (
     <div
       className={`${styles.cardContainer} ${styles.cardContainer2} ${styledStatus}`}
@@ -187,13 +211,40 @@ function CustomCard2({ eachProposal, index }) {
       </div>
       <div className={styles.cardStatusContainer2}>
         <p className={styles.cardStatusInfo}>
-          <b>Your voting status: </b>
-          Not voted
+          <b>Voting status: </b>
         </p>
-        <p className={styles.cardStatusInfo}>
-          <b>Preps to vote in this proposal: </b>
-          Espanicon, Icon foundation, IAM, rhizome
-        </p>
+        <div className={styles.voteTable}>
+          <div className={`${styles.voteTableRow} ${styles.voteTableHeader}`}>
+            <p
+              className={`${styles.tableRowItem} ${styles.tableRowItemAddress}`}
+            >
+              Prep Address
+            </p>
+            <p>Vote</p>
+          </div>
+          {prepsVoting == null ? (
+            <LoadingComponent />
+          ) : (
+            prepsVoting.map(eachPrep => {
+              return (
+                <div className={styles.voteTableRow}>
+                  <p
+                    className={`${styles.tableRowItem} ${styles.tableRowItemAddress}`}
+                  >
+                    {eachPrep[0]}
+                  </p>
+                  <p>
+                    {eachPrep[1] === "0x1"
+                      ? "Approve"
+                      : eachPrep[1] === "0x0"
+                      ? "Reject"
+                      : "no vote"}
+                  </p>
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
       <div className={styles.cardStatusContainer}>
         <button className={styles.button}>Approve</button>

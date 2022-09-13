@@ -240,6 +240,35 @@ function getAllPrepsAddresses(prepData) {
   });
   return result;
 }
+
+function getProposalVotes(voteObj) {
+  let result = [];
+  const typeOfVote = ["agree", "disagree", "noVote"];
+
+  for (let voteStatus of typeOfVote) {
+    switch (voteStatus) {
+      case typeOfVote[0]:
+        for (let eachVote of voteObj[voteStatus].list) {
+          result.push([eachVote.address, "0x1"]);
+        }
+        break;
+      case typeOfVote[1]:
+        for (let eachVote of voteObj[voteStatus].list) {
+          result.push([eachVote.address, "0x0"]);
+        }
+        break;
+      case typeOfVote[2]:
+        for (let eachVote of voteObj[voteStatus].list) {
+          result.push([eachVote, null]);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  return result;
+}
 const utils = {
   data,
   samples,
@@ -252,7 +281,8 @@ const utils = {
   isValidICONAddress,
   parseScore,
   customWalletEventListener,
-  getAllPrepsAddresses
+  getAllPrepsAddresses,
+  getProposalVotes
 };
 
 export default utils;

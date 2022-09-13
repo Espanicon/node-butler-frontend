@@ -134,6 +134,45 @@
 }
 .proposalContainerBody {
 }
+
+.voteTable {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  /* border: 1px solid #cecece; */
+  /* border-radius: 4px; */
+}
+.voteTableRow {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cecece;
+  border-radius: 4px;
+  margin: 5px;
+}
+.voteTableRow > p:nth-child(2) {
+  margin: 0px 10px;
+}
+.voteTableHeader {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: left;
+}
+.tableRowItemAddress {
+  max-width: 70%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-break: break-word;
+  text-align: left;
+}
 .imgLoading {
   height: 200px;
   max-height: 100%;
