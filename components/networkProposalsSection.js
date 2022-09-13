@@ -81,9 +81,14 @@ export default function NetworkProposalsSection({
     for (let eachProposal of allProposalsData) {
       if (eachProposal.status === "0x0") {
         activeProposals.push(eachProposal);
+      } else {
+        activeProposals.push(eachProposal);
       }
     }
 
+    console.log("all network proposals");
+    console.log(allProposalsData);
+    console.log(activeProposals);
     setActiveNetworkProposals(activeProposals);
   }
 
@@ -103,13 +108,24 @@ export default function NetworkProposalsSection({
   return userIsPrep === true ? (
     <div className={styles.main}>
       <h2>Active network proposals</h2>
-      {activeNetworkProposals == null ? (
-        <LoadingComponent />
-      ) : activeNetworkProposals.length < 1 ? (
-        <p>** CURRENTLY NO ACTIVE PROPOSALS TO VOTE **</p>
-      ) : (
-        <p>** ACTIVE PROPOSALS TO VOTE **</p>
-      )}
+      <div className={styles.section}>
+        {activeNetworkProposals == null ? (
+          <LoadingComponent />
+        ) : activeNetworkProposals.length < 1 ? (
+          <p>** CURRENTLY NO ACTIVE PROPOSALS TO VOTE **</p>
+        ) : (
+          activeNetworkProposals.map((eachProposal, index) => {
+            return (
+              <CustomCard2
+                eachProposal={eachProposal}
+                handleModalOnOpen={handleModalOnOpen}
+                index={index}
+                key={uuidv4()}
+              />
+            );
+          })
+        )}
+      </div>
       <Hr />
       <h2>All network proposals</h2>
       {networkProposals == null ? (
@@ -140,6 +156,51 @@ export default function NetworkProposalsSection({
   );
 }
 
+function CustomCard2({ eachProposal, index }) {
+  const [prepsVoting, setPrepsVoting] = useState(null);
+  const [hasVoted, setHasVoted] = useState(null);
+
+  let statusTitle =
+    DATA.statusTypes[eachProposal.status] == null
+      ? "UNKNOWN"
+      : DATA.statusTypes[eachProposal.status];
+  let proposalType =
+    DATA.proposalTypes[eachProposal.contents.type] == null
+      ? "UNKNOWN"
+      : DATA.proposalTypes[eachProposal.contents.type];
+  let styledStatus =
+    DATA.styledStatus[eachProposal.status] == null
+      ? styles.yellowBorder
+      : DATA.styledStatus[eachProposal.status];
+  let imgSrc =
+    DATA.imgSrc[eachProposal.status] == null
+      ? DATA.imgSrc["0x0"]
+      : DATA.imgSrc[eachProposal.status];
+
+  return (
+    <div
+      className={`${styles.cardContainer} ${styles.cardContainer2} ${styledStatus}`}
+    >
+      <div className={styles.cardTitle}>
+        <p>{eachProposal.contents.title}</p>
+      </div>
+      <div className={styles.cardStatusContainer2}>
+        <p className={styles.cardStatusInfo}>
+          <b>Your voting status: </b>
+          Not voted
+        </p>
+        <p className={styles.cardStatusInfo}>
+          <b>Preps to vote in this proposal: </b>
+          Espanicon, Icon foundation, IAM, rhizome
+        </p>
+      </div>
+      <div className={styles.cardStatusContainer}>
+        <button className={styles.button}>Approve</button>
+        <button className={styles.button}>Reject</button>
+      </div>
+    </div>
+  );
+}
 function CustomCard({ eachProposal, handleModalOnOpen, index }) {
   let statusTitle =
     DATA.statusTypes[eachProposal.status] == null
