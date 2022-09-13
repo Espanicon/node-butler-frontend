@@ -61,6 +61,18 @@
   margin: 0px;
 }
 .cardTitle {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-break: break-word;
+  text-align: left;
+}
+.cardTitle > p:nth-child(1) {
   font-weight: bold;
   font-size: 1.2rem;
   text-align: left;

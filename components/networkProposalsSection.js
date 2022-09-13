@@ -183,6 +183,7 @@ function CustomCard2({ eachProposal, index }) {
     >
       <div className={styles.cardTitle}>
         <p>{eachProposal.contents.title}</p>
+        <p>id: {eachProposal.id}</p>
       </div>
       <div className={styles.cardStatusContainer2}>
         <p className={styles.cardStatusInfo}>
