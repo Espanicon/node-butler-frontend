@@ -58,3 +58,17 @@
     transform: scale(0);
   }
 }
+
+/* Wallet Modal Container */
+.modalContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-break: break-word;
+  text-align: left;
+}

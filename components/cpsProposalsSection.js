@@ -49,9 +49,12 @@ export default function CPSProposalsSection({
       handleCPSProposals(cpsData);
     }
 
-    // fetch CPS Proposal data from node-butler backend
-    asyncFetch();
+    if (userIsPrep === true) {
+      // fetch CPS Proposal data from node-butler backend
+      asyncFetch();
+    }
   }, []);
+
   return userIsPrep === true ? (
     <div className={styles.main}>
       <div className={styles.header}>

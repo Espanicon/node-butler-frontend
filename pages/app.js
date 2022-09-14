@@ -127,9 +127,16 @@ export default function App() {
 
   useEffect(() => {
     async function initialFetch() {
-      const prepsRaw = await getPreps();
-      const prepsParsed = getAllPrepsAddresses(prepsRaw.preps);
-      setAllPreps(prepsParsed);
+      try {
+        const prepsRaw = await getPreps();
+        console.log("preps");
+        console.log(prepsRaw);
+        const prepsParsed = getAllPrepsAddresses(prepsRaw.preps);
+        setAllPreps(prepsParsed);
+      } catch (err) {
+        console.log("error fetching preps");
+        console.log(err);
+      }
     }
 
     // run initial async data fetch for al preps

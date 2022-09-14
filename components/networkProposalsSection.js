@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "../styles/networkProposalsSection.module.css";
-import { Hr, LoadingComponent } from "./customComponents";
+import { Hr, LoadingComponent, WalletResponseModal } from "./customComponents";
 import NodeButlerSDK from "../utils/customLib";
 import utils from "../utils/utils";
 import { v4 as uuidv4 } from "uuid";
@@ -11,7 +11,8 @@ const {
   getAllNetworkProposals,
   getNetworkProposal,
   approveNetworkProposal,
-  rejectNetworkProposal
+  rejectNetworkProposal,
+  getParsedTxResult
 } = nodeButlerLib;
 
 const DATA = {
@@ -53,6 +54,9 @@ const DATA = {
   }
 };
 
+const MAX_WAIT_PERIOD = utils.MAX_WAIT_PERIOD;
+const initialTxResultState = utils.initialTxResultState;
+
 export default function NetworkProposalsSection({
   localData,
   userIsPrep,
@@ -63,6 +67,29 @@ export default function NetworkProposalsSection({
   const [isOpen, setIsOpen] = useState(false);
   const [proposalInfo, setProposalInfo] = useState(false);
   const [proposalIndex, setProposalIndex] = useState(false);
+  const [walletModalIsOpen, setWalletModalIsOpen] = useState(false);
+  const [walletResponse, setWalletResponse] = useState(null);
+  const [txResults, setTxResults] = useState(initialTxResultState);
+
+  let txRef = useRef(null);
+  let countdownRef = useRef(0);
+
+  function handleWalletModalOnClose() {
+    setWalletModalIsOpen(false);
+    setWalletResponse(null);
+    setTxResults(initialTxResultState);
+    handleClearInterval();
+  }
+
+  function handleClearInterval() {
+    try {
+      countdownRef.current = 0;
+      clearInterval(txRef.current);
+    } catch (err) {
+      console.log("error trying to clear interval");
+      console.log(err);
+    }
+  }
 
   function handleModalOnClose() {
     setIsOpen(false);
@@ -81,6 +108,56 @@ export default function NetworkProposalsSection({
     setNetworkProposals(proposalData);
   }
 
+  function onProposalVote(proposalId, voteIsApprove) {
+    //
+    if (localData.auth.successfulLogin) {
+      console.log("casting vote");
+      console.log(proposalId);
+      console.log(voteIsApprove);
+      let txData = null;
+
+      if (voteIsApprove === true) {
+        // vote to approve this proposal
+        txData = approveNetworkProposal(
+          proposalId,
+          localData.auth.selectedWallet
+        );
+      } else if (voteIsApprove === false) {
+        // vote to reject this proposal
+        txData = rejectNetworkProposal(
+          proposalId,
+          localData.auth.selectedWallet
+        );
+      } else {
+        // should never happen
+      }
+      // test
+      console.log(txData);
+
+      // dispatch event to wallet
+      if (txData == null) {
+        alert("Data for transaction is invalid");
+      } else {
+        dispatchTxEvent(txData);
+      }
+    } else {
+      alert("Please login first to be able to sign tx with your wallet");
+    }
+  }
+
+  function dispatchTxEvent(txData) {
+    window.dispatchEvent(
+      new CustomEvent("ICONEX_RELAY_REQUEST", {
+        detail: {
+          type: "REQUEST_JSON-RPC",
+          payload: txData
+        }
+      })
+    );
+    // open modal window to show result of wallet tx request
+    setWalletModalIsOpen(true);
+  }
+
   function searchForActiveNetworkProposals(allProposalsData) {
     let activeProposals = [];
 
@@ -95,6 +172,49 @@ export default function NetworkProposalsSection({
     setActiveNetworkProposals(activeProposals);
   }
 
+  function handleTxResult(txResult) {
+    console.log("tx result");
+    console.log(txResult);
+
+    if (txResult.isError === true) {
+    } else {
+    }
+  }
+
+  useEffect(() => {
+    if (userIsPrep === true) {
+      if (walletResponse == null) {
+      } else {
+        if (walletResponse.isError === true) {
+        } else {
+          txRef.current = setInterval(async () => {
+            const txData = await getParsedTxResult(walletResponse.result);
+            setTxResults(txData);
+
+            countdownRef.current += 1;
+          }, 1000);
+        }
+      }
+    }
+
+    // returns function to clear interval on component dismount
+    return () => {
+      if (txRef.current == null) {
+      } else {
+        handleClearInterval();
+      }
+    };
+  }, [walletResponse]);
+
+  useEffect(() => {
+    if (
+      txResults.txExists === true ||
+      countdownRef.current >= MAX_WAIT_PERIOD
+    ) {
+      handleClearInterval();
+    }
+  }, [txResults]);
+
   useEffect(() => {
     async function fetchInitialData() {
       //
@@ -105,8 +225,35 @@ export default function NetworkProposalsSection({
       searchForActiveNetworkProposals(allNetworkProposals);
     }
 
-    // run initial data fetch
-    fetchInitialData();
+    function handleWalletResponse(response) {
+      setWalletResponse(response);
+    }
+
+    function runWalletEventListener(evnt) {
+      utils.customWalletEventListener(
+        evnt,
+        handleWalletResponse,
+        null,
+        null,
+        handleWalletModalOnClose
+      );
+    }
+
+    if (userIsPrep === true) {
+      // run initial data fetch
+      fetchInitialData();
+      // create event listener for Hana and ICONex wallets
+      window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+    }
+
+    // return the following function to perform cleanup of the event
+    // listener on component unmount
+    return function removeCustomEventListener() {
+      window.removeEventListener(
+        "ICONEX_RELAY_RESPONSE",
+        runWalletEventListener
+      );
+    };
   }, []);
   return userIsPrep === true ? (
     <div className={styles.main}>
@@ -124,6 +271,8 @@ export default function NetworkProposalsSection({
                 handleModalOnOpen={handleModalOnOpen}
                 index={index}
                 key={uuidv4()}
+                handleProposalVote={onProposalVote}
+                localData={localData}
               />
             );
           })
@@ -153,16 +302,23 @@ export default function NetworkProposalsSection({
         proposals={networkProposals}
         index={proposalIndex}
       />
+      <WalletResponseModal
+        isOpen={walletModalIsOpen}
+        onClose={handleWalletModalOnClose}
+        txData={txResults}
+        walletResponse={walletResponse}
+      />
     </div>
   ) : (
     children
   );
 }
 
-function CustomCard2({ eachProposal, index }) {
+function CustomCard2({ eachProposal, index, handleProposalVote, localData }) {
   const [prepsVoting, setPrepsVoting] = useState(null);
-  const [hasVoted, setHasVoted] = useState(null);
+  const [voteStatus, setVoteStatus] = useState(null);
   const [networkProposalData, setNetworkProposalData] = useState(null);
+  const [votingIsDisable, setVotingIsDisable] = useState(true);
 
   let statusTitle =
     DATA.statusTypes[eachProposal.status] == null
@@ -181,6 +337,30 @@ function CustomCard2({ eachProposal, index }) {
       ? DATA.imgSrc["0x0"]
       : DATA.imgSrc[eachProposal.status];
 
+  function handleOnApprove() {
+    //
+    handleOnButtonClick(true);
+  }
+
+  function handleOnReject() {
+    //
+    handleOnButtonClick(false);
+  }
+  function handleOnButtonClick(voteIsApprove) {
+    //
+    handleProposalVote(eachProposal.id, voteIsApprove);
+  }
+
+  // useEffect(() => {
+  //   if (localData == null) {
+  //   } else {
+  //     try {
+  //     } catch (err) {
+  //       console.log("error checking login status of user");
+  //       console.log(err);
+  //     }
+  //   }
+  // }, [localData]);
   useEffect(() => {
     async function initialFetch() {
       //
@@ -188,18 +368,39 @@ function CustomCard2({ eachProposal, index }) {
 
       const votes = utils.getProposalVotes(proposalData.vote);
       setPrepsVoting(votes);
-      console.log("votes");
-      console.log(votes);
+
+      try {
+        votes.map(prepVoteArray => {
+          if (prepVoteArray[0] === localData.auth.selectedWallet) {
+            if (prepVoteArray[1] === "0x1") {
+              console.log("this prep");
+              console.log(prepVoteArray);
+              setVotingIsDisable(true);
+              setVoteStatus(true);
+            } else if (prepVoteArray[1] === "0x0") {
+              setVotingIsDisable(false);
+              setVoteStatus(false);
+            } else {
+              setVotingIsDisable(false);
+              setVoteStatus(null);
+            }
+          } else {
+          }
+        });
+      } catch (err) {
+        console.log("error checking login status of user");
+        console.log(err);
+      }
     }
 
     // run initial fetch
     initialFetch();
   }, []);
 
-  useEffect(() => {
-    console.log("preps voting");
-    console.log(prepsVoting);
-  }, [prepsVoting]);
+  // useEffect(() => {
+  //   console.log("preps voting");
+  //   console.log(prepsVoting);
+  // }, [prepsVoting]);
 
   return (
     <div
@@ -211,7 +412,12 @@ function CustomCard2({ eachProposal, index }) {
       </div>
       <div className={styles.cardStatusContainer2}>
         <p className={styles.cardStatusInfo}>
-          <b>Voting status: </b>
+          <b>Voting status: </b>{" "}
+          {voteStatus === true
+            ? "Voted (approve)"
+            : voteStatus === false
+            ? "Voted (Reject)"
+            : "No Vote"}
         </p>
         <div className={styles.voteTable}>
           <div className={`${styles.voteTableRow} ${styles.voteTableHeader}`}>
@@ -225,9 +431,9 @@ function CustomCard2({ eachProposal, index }) {
           {prepsVoting == null ? (
             <LoadingComponent />
           ) : (
-            prepsVoting.map(eachPrep => {
+            prepsVoting.map((eachPrep, index) => {
               return (
-                <div className={styles.voteTableRow}>
+                <div className={styles.voteTableRow} key={uuidv4()}>
                   <p
                     className={`${styles.tableRowItem} ${styles.tableRowItemAddress}`}
                   >
@@ -247,8 +453,20 @@ function CustomCard2({ eachProposal, index }) {
         </div>
       </div>
       <div className={styles.cardStatusContainer}>
-        <button className={styles.button}>Approve</button>
-        <button className={styles.button}>Reject</button>
+        <button
+          className={`${styles.button} ${styles.buttonApprove}`}
+          onClick={handleOnApprove}
+          disabled={votingIsDisable}
+        >
+          Approve
+        </button>
+        <button
+          className={`${styles.button} ${styles.buttonReject}`}
+          onClick={handleOnReject}
+          disabled={votingIsDisable}
+        >
+          Reject
+        </button>
       </div>
     </div>
   );

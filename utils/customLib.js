@@ -18,6 +18,8 @@ const API_DATA = {
     node: "server01.espanicon.team"
   }
 };
+// const USE_NID = API_DATA.berlin.nid;
+// const API_NODE = API_DATA.berlin.node;
 const USE_NID = API_DATA.local.nid;
 const API_NODE = API_DATA.local.node;
 // const API_NODE = "api.espanicon.team";

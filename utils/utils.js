@@ -84,6 +84,12 @@ const samples = {
   }
 };
 
+const MAX_WAIT_PERIOD = 5;
+
+const initialTxResultState = {
+  txExists: false
+};
+
 function parseBonderWallet(wallet) {
   return (
     data.tracker.foundation.root +
@@ -282,7 +288,9 @@ const utils = {
   parseScore,
   customWalletEventListener,
   getAllPrepsAddresses,
-  getProposalVotes
+  getProposalVotes,
+  MAX_WAIT_PERIOD,
+  initialTxResultState
 };
 
 export default utils;

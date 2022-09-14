@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styles from "../styles/overviewSection.module.css";
-import { Hr, LoadingComponent } from "./customComponents";
+import { Hr, LoadingComponent, WalletResponseModal } from "./customComponents";
 import GenericModal from "./genericModal";
 import NodeButlerSDK from "../utils/customLib";
 import { v4 as uuidv4 } from "uuid";
@@ -46,10 +46,8 @@ const initPrepDetailsForm = {
   nodeAddress: ""
 };
 
-const MAX_WAIT_PERIOD = 5;
-const initialTxResultState = {
-  txExists: false
-};
+const MAX_WAIT_PERIOD = utils.MAX_WAIT_PERIOD;
+const initialTxResultState = utils.initialTxResultState;
 
 const {
   parseBonderFormInputs,
@@ -144,7 +142,7 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
         dispatchTxEvent(txData);
       }
     } else {
-      alert("Please login first to be able t sign tx with your wallet");
+      alert("Please login first to be able to sign tx with your wallet");
     }
   }
 
@@ -189,16 +187,18 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
   }, [txResults]);
 
   useEffect(() => {
-    if (walletResponse == null) {
-    } else {
-      if (walletResponse.isError === true) {
+    if (userIsPrep === true) {
+      if (walletResponse == null) {
       } else {
-        txRef.current = setInterval(async () => {
-          const txData = await getParsedTxResult(walletResponse.result);
-          setTxResults(txData);
+        if (walletResponse.isError === true) {
+        } else {
+          txRef.current = setInterval(async () => {
+            const txData = await getParsedTxResult(walletResponse.result);
+            setTxResults(txData);
 
-          countdownRef.current += 1;
-        }, 1000);
+            countdownRef.current += 1;
+          }, 1000);
+        }
       }
     }
 
@@ -243,9 +243,6 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
       setBondedInfoState(parsedBonderList);
     }
 
-    // run async fetch
-    runAsync();
-
     // define wallet event listener
     function handleWalletResponse(response) {
       setWalletResponse(response);
@@ -261,8 +258,12 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
       );
     }
 
-    // create event listener for Hana and ICONex wallets
-    window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+    if (userIsPrep === true) {
+      // run async fetch
+      runAsync();
+      // create event listener for Hana and ICONex wallets
+      window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+    }
 
     // return the following function to perform cleanup of the event
     // listener on component unmount
@@ -513,29 +514,5 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
         walletResponse={walletResponse}
       />
     </div>
-  );
-}
-
-function WalletResponseModal({ isOpen, onClose, txData, walletResponse }) {
-  useEffect(() => {
-    console.log("wallet response and txData");
-    console.log(walletResponse);
-    console.log(txData);
-  }, [txData]);
-
-  return (
-    <GenericModal isOpen={isOpen} onClose={onClose} useSmall={true}>
-      <div className={styles.modalContainer}>
-        {walletResponse == null ? (
-          <LoadingComponent />
-        ) : (
-          <>
-            <h2>Transaction Result</h2>
-            <p>Transaction State: {txData.status ? "SUCCESS" : "FAILED"}</p>
-            <p>Transaction hash: {txData.txHash}</p>
-          </>
-        )}
-      </div>
-    </GenericModal>
   );
 }
