@@ -129,8 +129,6 @@ export default function App() {
     async function initialFetch() {
       try {
         const prepsRaw = await getPreps();
-        console.log("preps");
-        console.log(prepsRaw);
         const prepsParsed = getAllPrepsAddresses(prepsRaw.preps);
         setAllPreps(prepsParsed);
       } catch (err) {

@@ -156,17 +156,6 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
     });
   }
 
-  // function handleTxResult(txResults) {
-  //   console.log("tx result");
-  //   console.log(txResults);
-
-  //   if (txResults.isError === true) {
-  //     setTxResults(txResults.message);
-  //   } else {
-  //     setTxResults(JSON.stringify(txResults.result));
-  //   }
-  // }
-
   function handleClearInterval() {
     try {
       countdownRef.current = 0;

@@ -99,7 +99,6 @@ export default function NetworkProposalsSection({
 
   function handleModalOnOpen(index) {
     setProposalIndex(index);
-    // console.log(networkProposals);
     setIsOpen(true);
   }
 
@@ -111,9 +110,6 @@ export default function NetworkProposalsSection({
   function onProposalVote(proposalId, voteIsApprove) {
     //
     if (localData.auth.successfulLogin) {
-      console.log("casting vote");
-      console.log(proposalId);
-      console.log(voteIsApprove);
       let txData = null;
 
       if (voteIsApprove === true) {
@@ -131,8 +127,6 @@ export default function NetworkProposalsSection({
       } else {
         // should never happen
       }
-      // test
-      console.log(txData);
 
       // dispatch event to wallet
       if (txData == null) {
@@ -165,20 +159,11 @@ export default function NetworkProposalsSection({
       if (eachProposal.status === "0x0") {
         activeProposals.push(eachProposal);
       } else {
-        activeProposals.push(eachProposal);
+        // activeProposals.push(eachProposal);
       }
     }
 
     setActiveNetworkProposals(activeProposals);
-  }
-
-  function handleTxResult(txResult) {
-    console.log("tx result");
-    console.log(txResult);
-
-    if (txResult.isError === true) {
-    } else {
-    }
   }
 
   useEffect(() => {
@@ -319,6 +304,7 @@ function CustomCard2({ eachProposal, index, handleProposalVote, localData }) {
   const [voteStatus, setVoteStatus] = useState(null);
   const [networkProposalData, setNetworkProposalData] = useState(null);
   const [votingIsDisable, setVotingIsDisable] = useState(true);
+  const [prepCanVote, setPrepCanVote] = useState(false);
 
   let statusTitle =
     DATA.statusTypes[eachProposal.status] == null
@@ -351,34 +337,29 @@ function CustomCard2({ eachProposal, index, handleProposalVote, localData }) {
     handleProposalVote(eachProposal.id, voteIsApprove);
   }
 
-  // useEffect(() => {
-  //   if (localData == null) {
-  //   } else {
-  //     try {
-  //     } catch (err) {
-  //       console.log("error checking login status of user");
-  //       console.log(err);
-  //     }
-  //   }
-  // }, [localData]);
   useEffect(() => {
     async function initialFetch() {
       //
       const proposalData = await getNetworkProposal(eachProposal.id);
 
+      // test
+      console.log("network proposal");
+      console.log(eachProposal.id);
+      console.log(proposalData);
+
       const votes = utils.getProposalVotes(proposalData.vote);
       setPrepsVoting(votes);
 
       try {
+        // check how preps have voted so far on proposal
         votes.map(prepVoteArray => {
           if (prepVoteArray[0] === localData.auth.selectedWallet) {
+            // if the logged prep is in the list of preps to vote
             if (prepVoteArray[1] === "0x1") {
-              console.log("this prep");
-              console.log(prepVoteArray);
               setVotingIsDisable(true);
               setVoteStatus(true);
             } else if (prepVoteArray[1] === "0x0") {
-              setVotingIsDisable(false);
+              setVotingIsDisable(true);
               setVoteStatus(false);
             } else {
               setVotingIsDisable(false);
@@ -386,6 +367,14 @@ function CustomCard2({ eachProposal, index, handleProposalVote, localData }) {
             }
           } else {
           }
+
+          // check if the logged user is validated to vote
+          const loggedUserIsValidatedToVote = utils.checkIfPrepNeedToVote(
+            votes,
+            localData.auth.selectedWallet
+          );
+
+          setPrepCanVote(loggedUserIsValidatedToVote);
         });
       } catch (err) {
         console.log("error checking login status of user");
@@ -396,11 +385,6 @@ function CustomCard2({ eachProposal, index, handleProposalVote, localData }) {
     // run initial fetch
     initialFetch();
   }, []);
-
-  // useEffect(() => {
-  //   console.log("preps voting");
-  //   console.log(prepsVoting);
-  // }, [prepsVoting]);
 
   return (
     <div
@@ -456,14 +440,14 @@ function CustomCard2({ eachProposal, index, handleProposalVote, localData }) {
         <button
           className={`${styles.button} ${styles.buttonApprove}`}
           onClick={handleOnApprove}
-          disabled={votingIsDisable}
+          disabled={votingIsDisable && prepCanVote}
         >
           Approve
         </button>
         <button
           className={`${styles.button} ${styles.buttonReject}`}
           onClick={handleOnReject}
-          disabled={votingIsDisable}
+          disabled={votingIsDisable && prepCanVote}
         >
           Reject
         </button>

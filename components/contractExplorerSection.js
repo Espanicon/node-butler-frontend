@@ -210,9 +210,6 @@ export default function ContractExplorerSection({ localData, userIsPrep }) {
 
   function handleTxResult(txResult) {
     //
-    console.log("tx result");
-    console.log(txResult);
-
     if (txResult.isError === true) {
       setTxResults(txResult.message);
     } else {

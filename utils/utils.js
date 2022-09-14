@@ -203,8 +203,8 @@ function customWalletEventListener(
 ) {
   // fetch event data
   const { type, payload } = evnt.detail;
-  console.log("event");
-  console.log(evnt);
+  // console.log("event");
+  // console.log(evnt);
 
   // switch case for every type of event raised
   switch (type) {
@@ -275,6 +275,18 @@ function getProposalVotes(voteObj) {
 
   return result;
 }
+
+function checkIfPrepNeedToVote(arrayOfPreps, localPrep) {
+  let result = false;
+
+  for (let each of arrayOfPreps) {
+    if (each[0] === localPrep) {
+      result = true;
+    }
+  }
+
+  return result;
+}
 const utils = {
   data,
   samples,
@@ -290,7 +302,8 @@ const utils = {
   getAllPrepsAddresses,
   getProposalVotes,
   MAX_WAIT_PERIOD,
-  initialTxResultState
+  initialTxResultState,
+  checkIfPrepNeedToVote
 };
 
 export default utils;
