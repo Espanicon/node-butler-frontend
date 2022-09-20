@@ -20,10 +20,10 @@ const API_DATA = {
 };
 // const USE_NID = API_DATA.berlin.nid;
 // const API_NODE = API_DATA.berlin.node;
-const USE_NID = API_DATA.local.nid;
-const API_NODE = API_DATA.local.node;
-// const API_NODE = "api.espanicon.team";
-// const API_NODE = "berlin.net.solidwallet.io";
+// const USE_NID = API_DATA.local.nid;
+// const API_NODE = API_DATA.local.node;
+const USE_NID = API_DATA.mainnet.nid;
+const API_NODE = API_DATA.mainnet.node;
 
 // Node-Butler Lib
 //
