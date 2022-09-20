@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styles from "../styles/customComponents.module.css";
 import GenericModal from "./genericModal";
@@ -27,16 +27,37 @@ export function WalletResponseModal({
   txData,
   walletResponse
 }) {
+  // useEffect(() => {
+  //   console.log("wallet response");
+  //   console.log(walletResponse);
+  //   console.log("txData");
+  //   console.log(txData);
+  // });
   return (
     <GenericModal isOpen={isOpen} onClose={onClose} useSmall={true}>
       <div className={styles.modalContainer}>
         {walletResponse == null ? (
           <LoadingComponent />
-        ) : (
+        ) : walletResponse.isError === true ? (
+          <>
+            <h2>Transaction Result</h2>
+            <p>Unexpected Error processing tx with installed wallet</p>
+            <p>
+              Error message:{" "}
+              {walletResponse.message == null ? "null" : walletResponse.message}
+            </p>
+          </>
+        ) : txData.txExists === true ? (
           <>
             <h2>Transaction Result</h2>
             <p>Transaction State: {txData.status ? "SUCCESS" : "FAILED"}</p>
             <p>Transaction hash: {txData.txHash}</p>
+          </>
+        ) : (
+          <>
+            <h2>Transaction Result</h2>
+            <p>Transaction State: **FETCHING TX**</p>
+            <p>Transaction hash: Null</p>
           </>
         )}
       </div>
