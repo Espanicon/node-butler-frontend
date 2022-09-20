@@ -197,8 +197,8 @@ export default function App() {
                 case SECTIONS[1].code:
                   return (
                     <CPSProposalsSection
-                      localData={MOCK_DATA}
-                      // localData={localData}
+                      // localData={MOCK_DATA}
+                      localData={localData}
                       userIsPrep={userIsAPrep}
                     >
                       <CustomMessage msg="User is not a Prep" />

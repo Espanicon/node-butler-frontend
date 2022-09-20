@@ -19,11 +19,11 @@ export default function Home() {
             </h2>
             <p>
               <b>Node-Butler</b> is a web-based blockchain application with the
-              goal of making it easier to manage validator nodes in{" "}
+              goal of making it easier to manage validator nodes in the{" "}
               <b>ICON Network</b>.
             </p>
             <p>
-              This project is able to exists thanks to a fund granted by the{" "}
+              This project is able to exists thanks to funding granted by the{" "}
               <b>Contribution Proposal System</b> a decentralized funding
               program that exists as a core component of the ICON Network, if
               you want to create cool projects in ICON and are looking for

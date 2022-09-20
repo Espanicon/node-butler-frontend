@@ -201,15 +201,6 @@ export default function NetworkProposalsSection({
   }, [txResults]);
 
   useEffect(() => {
-    async function fetchInitialData() {
-      //
-      // const allNetworkProposals = await getAllNetworkProposalsFromNB();
-      const allNetworkProposals = await getAllNetworkProposals();
-      handleNetworkProposals(allNetworkProposals);
-
-      searchForActiveNetworkProposals(allNetworkProposals);
-    }
-
     function handleWalletResponse(response) {
       setWalletResponse(response);
     }
@@ -224,12 +215,8 @@ export default function NetworkProposalsSection({
       );
     }
 
-    if (userIsPrep === true) {
-      // run initial data fetch
-      fetchInitialData();
-      // create event listener for Hana and ICONex wallets
-      window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
-    }
+    // create event listener for Hana and ICONex wallets
+    window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
 
     // return the following function to perform cleanup of the event
     // listener on component unmount
@@ -240,6 +227,23 @@ export default function NetworkProposalsSection({
       );
     };
   }, []);
+
+  useEffect(() => {
+    async function fetchInitialData() {
+      //
+      // const allNetworkProposals = await getAllNetworkProposalsFromNB();
+      const allNetworkProposals = await getAllNetworkProposals();
+      handleNetworkProposals(allNetworkProposals);
+
+      searchForActiveNetworkProposals(allNetworkProposals);
+    }
+
+    if (userIsPrep === true) {
+      // run initial data fetch
+      fetchInitialData();
+    }
+  }, [userIsPrep]);
+
   return userIsPrep === true ? (
     <div className={styles.main}>
       <h2>Active network proposals</h2>

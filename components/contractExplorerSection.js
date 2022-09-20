@@ -243,6 +243,7 @@ export default function ContractExplorerSection({ localData, userIsPrep }) {
       );
     };
   }, []);
+
   return (
     <div className={styles.main}>
       <h2>Contract Explorer</h2>

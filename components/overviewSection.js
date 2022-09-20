@@ -167,6 +167,35 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
   }
 
   useEffect(() => {
+    // define wallet event listener
+    function handleWalletResponse(response) {
+      setWalletResponse(response);
+    }
+
+    function runWalletEventListener(evnt) {
+      utils.customWalletEventListener(
+        evnt,
+        handleWalletResponse,
+        null,
+        null,
+        handleWalletModalOnClose
+      );
+    }
+
+    // create event listener for Hana and ICONex wallets
+    window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
+
+    // return the following function to perform cleanup of the event
+    // listener on component unmount
+    return function removeCustomEventListener() {
+      window.removeEventListener(
+        "ICONEX_RELAY_RESPONSE",
+        runWalletEventListener
+      );
+    };
+  }, []);
+
+  useEffect(() => {
     if (
       txResults.txExists === true ||
       countdownRef.current >= MAX_WAIT_PERIOD
@@ -202,67 +231,46 @@ export default function OverviewSection({ localData, userIsPrep, children }) {
 
   useEffect(() => {
     async function runAsync() {
-      const loggedPrep = localData.auth.successfulLogin
-        ? localData.auth.selectedWallet
-        : null;
-      // get overall prep data
-      const prepData = await getPrep(loggedPrep);
-      const parsedPrepData = parsePrepData(prepData);
+      if (userIsPrep === true) {
+        try {
+          const loggedPrep = localData.auth.successfulLogin
+            ? localData.auth.selectedWallet
+            : null;
+          // get overall prep data
+          const prepData = await getPrep(loggedPrep);
+          const parsedPrepData = parsePrepData(prepData);
 
-      // get bonder data
-      const bonderList = await getBonderList(localData.auth.selectedWallet);
-      const parsedBonderList = utils.parseGetBonderList(bonderList);
+          // get bonder data
+          const bonderList = await getBonderList(localData.auth.selectedWallet);
+          const parsedBonderList = utils.parseGetBonderList(bonderList);
 
-      // get prep details data
-      // TODO: uncomment after testing
-      const prepDetails = await getPrepFromNB(loggedPrep);
-      let prepLogoUrl = null;
+          // get prep details data
+          // TODO: uncomment after testing
+          const prepDetails = await getPrepFromNB(loggedPrep);
+          let prepLogoUrl = null;
 
-      if (prepDetails == null) {
-      } else {
-        const parsedPrepDetails = parsePrepFromNB(prepDetails);
-        prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
+          if (prepDetails == null) {
+          } else {
+            const parsedPrepDetails = parsePrepFromNB(prepDetails);
+            prepLogoUrl = getPrepLogoUrl(parsedPrepDetails);
+          }
+
+          // get prep logo data
+          setPrepLogo(prepLogoUrl);
+
+          // update states
+          setOverviewState(parsedPrepData);
+          setBondedInfoState(parsedBonderList);
+        } catch (err) {
+          console.log("error running initial react effects");
+          console.log(err);
+        }
       }
-
-      // get prep logo data
-      setPrepLogo(prepLogoUrl);
-
-      // update states
-      setOverviewState(parsedPrepData);
-      setBondedInfoState(parsedBonderList);
     }
 
-    // define wallet event listener
-    function handleWalletResponse(response) {
-      setWalletResponse(response);
-    }
-
-    function runWalletEventListener(evnt) {
-      utils.customWalletEventListener(
-        evnt,
-        handleWalletResponse,
-        null,
-        null,
-        handleWalletModalOnClose
-      );
-    }
-
-    if (userIsPrep === true) {
-      // run async fetch
-      runAsync();
-      // create event listener for Hana and ICONex wallets
-      window.addEventListener("ICONEX_RELAY_RESPONSE", runWalletEventListener);
-    }
-
-    // return the following function to perform cleanup of the event
-    // listener on component unmount
-    return function removeCustomEventListener() {
-      window.removeEventListener(
-        "ICONEX_RELAY_RESPONSE",
-        runWalletEventListener
-      );
-    };
-  }, []);
+    // run async fetch
+    runAsync();
+  }, [userIsPrep]);
 
   return (
     <div>
