@@ -2,4 +2,4 @@ services:
   node-butler-frontend:
     build: "${DOCKER_PATH}" 
     ports:
-      - "3000:3000"
+      - "3000:3002"
