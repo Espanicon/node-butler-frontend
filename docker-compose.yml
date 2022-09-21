@@ -1,5 +1,14 @@
 services:
   node-butler-frontend:
-    build: "${DOCKER_PATH}" 
+    build: "${DOCKER_PATH}"
     ports:
-      - "3000:3002"
+      - "3002:3000"
+  node-butler-frontend-1:
+    build: "${DOCKER_PATH}"
+    ports:
+      - "3003:3000"
+  node-butler-frontend-2:
+    build: "${DOCKER_PATH}"
+    ports:
+      - "3004:3000"
+
