@@ -16,7 +16,7 @@ export default function About() {
           <SectionWithLogo path="/images/espanicon-logo.png">
             <h1>About Node Butler</h1>
             <p>
-              <b>Node Butler</b> is a web app intented to facilitate the
+              <b>Node Butler</b> is a web app intended to facilitate the
               management of validator nodes in the ICON Network. It allows node
               managers to easily execute common task like editing on chain node
               data (node name, email, country, etc), managing wallets for
