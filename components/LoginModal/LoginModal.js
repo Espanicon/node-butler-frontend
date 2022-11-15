@@ -5,7 +5,8 @@ import Modal from "react-modal";
 import Icx from "./utils/hw-app-icx/Icx2.js";
 import TransportWebHID from "@ledgerhq/hw-transport-webhid";
 import { v4 as uuidv4 } from "uuid";
-import { getIcxBalance } from "./utils/lib";
+import lib from "./utils/lib";
+const { getIcxBalance } = lib;
 
 import "@fontsource/lato";
 import styles from "./LoginModal.module.css";
