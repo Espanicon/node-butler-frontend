@@ -49,4 +49,6 @@ async function getIcxBalance(address, decimals = 2) {
   }
 }
 
-module.exports = { getIcxBalance };
+const lib = { getIcxBalance };
+
+export default lib;
